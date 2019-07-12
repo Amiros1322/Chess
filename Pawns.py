@@ -1,0 +1,50 @@
+from Piece import Piece
+from Queen import Queen
+
+class Pawn(Piece):
+    #TODO: implement en passant. when you move a pawn check if you moved it 2 spaces. if you did turn en passant true
+    def __init__(self, x, y, color):
+        super().__init__(x, y, color)
+        # if a pawn moves 2 squares, an opponent may do take the piece and move to the first
+        # square the pawn moved past.
+        self.en_passant = False
+
+
+
+    def __str__(self):
+        if self.color == "white":
+            return 'p'
+        return 'P'
+
+    def poss_moves(self, board):
+        # all pawn movements are one or two squares, but in different directions and with different starting
+        # squares depending on the color of the piece.
+        change = 1  # the direction the piece moves in - will change to -1 if piece is white.
+        first_y = 1  # the y value that the piece starts on
+        if str(self).islower():
+            change = -1
+            first_y = 6
+
+        # puts all squares pawn could possibly go to into a list poss_moves
+        poss_moves = [(self.x, self.y + change), (self.x + 1, self.y + change), (self.x - 1, self.y + change)]
+
+        # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
+        if self.y == first_y:
+            poss_moves.append((self.x,self.y + 2*change))
+
+        poss_moves = self.valid_moves(poss_moves, board.back_board)
+
+        i = 0
+        while i < len(poss_moves):
+            x = poss_moves[i][0]
+            y = poss_moves[i][1]
+            if board.back_board[y][x] == None:
+                del poss_moves[i]
+                i -= 1
+            i += 1
+
+        return poss_moves
+
+    #promotes the pawn to a queen
+    def promote(self):
+        return Queen(self.x, self.y, self.color)

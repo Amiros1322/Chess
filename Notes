@@ -1,0 +1,8 @@
+Lessons to keep in mind:
+-I had trouble with the coordinates of the pieces on the board, it would have been good to deal with the mismatch
+between the nested array (array[y][x]) and the normal coordinates system where x comes before y early on.
+-This is python, negative numbers in arrays wont throw an exception. (maybe use assertion?)
+- you can't delete things from a list while iterating over it. It screws with the indexes.
+- Make a general function that checks if squares are valid to move to (on the board and not occupied by a friendly
+  piece)
+- Make a detailed map of what you want to do so that you will be able to jump in after months of leaving the project.
