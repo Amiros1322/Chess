@@ -21,14 +21,20 @@ def Main():
      game_board.print_front()
 
      while not game_over:
+
          while True:
-           selected = None
-           command = input("sel ") #gets the coordiantes as input
-           if(val_select(command, game_board, turn)):
-               turn = switch_turn(turn)
-               print("Good job! Now its {0}'s turn".format(turn))
-           else:
-             print("Invalid input. Please try again.")
+             selected = None
+             command = input("sel ") #gets the coordiantes as input
+
+             if val_select(command, game_board, turn):
+                 y = int(command[1])
+                 x = int(command[0])
+
+                 moves = game_board.back_board[y][x].poss_moves(game_board.back_board)
+                 game_board.show_selection(moves)
+                 print("Good job! Now its {0}'s turn".format(turn))
+             else:
+                 print("Invalid input. Please try again.")
 
 
 #Inputs: 2 digit selection command, board, which color's turn it is.
@@ -59,10 +65,13 @@ def val_select(command, board, turn):
         print(sys.exc_info()[0])
         return False
 
+
 def switch_turn(turn):
     if turn == "white":
         return "black"
     return "white"
+
+
 
 #def val_output(command, board):
 

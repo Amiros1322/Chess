@@ -31,10 +31,10 @@ class Piece(object, metaclass = ABCMeta):
         while i < len(poss_moves):
             x = poss_moves[i][0]
             y = poss_moves[i][1]
-            if  ( 
-                    min(poss_moves[i]) < 0 or max(poss_moves[i]) > 7 or \
+            if(
+                    min(poss_moves[i]) < 0 or max(poss_moves[i]) > 7 or
                     (back_board[y][x] is not None and back_board[y][x].color == self.color) 
-                ):
+              ):
                 poss_moves.remove(poss_moves[i])
                 i -= 1
             i += 1
