@@ -1,12 +1,14 @@
 import Knight, Bishop, Rook, Queen, King
 from Board import Board
 from Pawns import Pawn
+import sys
+
 
 def Main():
      game_board = Board()
 
      game_over = False
-     turn = 1  # when turn = 1 it is white's turn, and when turn = -1 it is black's turn.
+     turn = "white"
 
      print("Welcome to Chess!")
      print("Each piece is represented by the first letter in its' name (The lowercase pieces "
@@ -19,23 +21,50 @@ def Main():
      game_board.print_front()
 
      while not game_over:
-         command = input("sel ") #gets the coordiantes as input
-         if(val_input(command, game_board)):
+         while True:
+           selected = None
+           command = input("sel ") #gets the coordiantes as input
+           if(val_select(command, game_board, turn)):
+               turn = switch_turn(turn)
+               print("Good job! Now its {0}'s turn".format(turn))
+           else:
+             print("Invalid input. Please try again.")
 
 
-
-
-def val_input(command, board):
-    x = None
-    y = None
+#Inputs: 2 digit selection command, board, which color's turn it is.
+#Output: True if command is valid. False if invalid. It will print an error message if false.
+def val_select(command, board, turn):
     try:
         y = int(command[1])
         x = int(command[0])
-        if(board[])
-    except :
+
+        if len(command) != 2:
+            print("The selection command must consist of two positive numbers.")
+            return False
+
+        if board.back_board[y][x].color == turn:
+            return True
+        else:
+            print("That is not a {0} piece. It is {0}'s turn".format(turn))
+            return False
+    except IndexError:
+        print("Please enter values between 0 and 7.")
+        return False
+    except AttributeError:
+        print("There is no piece on that square")
+        return False
+    except ValueError:
+        print("The selection command must consist of two positive numbers between 0 and 7.")
+    except:
+        print(sys.exc_info()[0])
         return False
 
-def val_output(command, board):
+def switch_turn(turn):
+    if turn == "white":
+        return "black"
+    return "white"
+
+#def val_output(command, board):
 
      # p = Pawn(2, 2, "black")
      # moves = [(2, 3), (2, -3), (5, 1)]
