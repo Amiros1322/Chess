@@ -16,11 +16,12 @@ class Pawn(Piece):
             return 'p'
         return 'P'
 
-    def poss_moves(self, board):
+    def poss_moves(self, back_board):
         # all pawn movements are one or two squares, but in different directions and with different starting
         # squares depending on the color of the piece.
         change = 1  # the direction the piece moves in - will change to -1 if piece is white.
         first_y = 1  # the y value that the piece starts on
+
         if str(self).islower():
             change = -1
             first_y = 6
@@ -30,15 +31,15 @@ class Pawn(Piece):
 
         # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
         if self.y == first_y:
-            poss_moves.append((self.x,self.y + 2*change))
+            poss_moves.append((self.x, self.y + 2*change))
 
-        poss_moves = self.valid_moves(poss_moves, board.back_board)
+        poss_moves = self.valid_moves(poss_moves, back_board)
 
         i = 0
         while i < len(poss_moves):
             x = poss_moves[i][0]
             y = poss_moves[i][1]
-            if board.back_board[y][x] == None:
+            if back_board[y][x] is None:
                 del poss_moves[i]
                 i -= 1
             i += 1

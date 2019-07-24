@@ -5,40 +5,41 @@ import sys
 
 
 def Main():
-     game_board = Board()
+    game_board = Board()
 
-     game_over = False
-     turn = "white"
+    game_over = False
+    turn = "white"
 
-     print("Welcome to Chess!")
-     print("Each piece is represented by the first letter in its' name (The lowercase pieces "
+    print("Welcome to Chess!")
+    print("Each piece is represented by the first letter in its' name (The lowercase pieces "
            "are white and the uppercase pieces are black.)")
-     print("To select a piece, write 'sel [Piece coordinates]'. For example: 'sel 46' to select white's king pawn")
-     print("The places the piece can be moved to will be highlighted, and then you will be able to use the "
+    print("To select a piece, write 'sel [Piece coordinates]'. For example: 'sel 46' to select white's king pawn")
+    print("The places the piece can be moved to will be highlighted, and then you will be able to use the "
            "'mov [Piece coordinates]' command to move a piece to a selected square.")
-     print("For example: 'mov 44' will move the selected pawn two squares forward")
+    print("For example: 'mov 44' will move the selected pawn two squares forward")
 
-     game_board.print_front()
+    game_board.print_front()
 
-     while not game_over:
+    while not game_over:
 
-         while True:
-             selected = None
-             command = input("sel ") #gets the coordiantes as input
+        while True:
+            selected = None
+            command = input("sel ")  # gets the coordinates as input
 
-             if val_select(command, game_board, turn):
-                 y = int(command[1])
-                 x = int(command[0])
+            if val_select(command, game_board, turn):
+                y = int(command[1])
+                x = int(command[0])
 
-                 moves = game_board.back_board[y][x].poss_moves(game_board.back_board)
-                 game_board.show_selection(moves)
-                 print("Good job! Now its {0}'s turn".format(turn))
-             else:
-                 print("Invalid input. Please try again.")
+                moves = game_board.back_board[y][x].poss_moves(game_board.back_board)
+                game_board.show_selection(moves)
+                turn = switch_turn(turn)
+                print("Good job! Now its {0}'s turn".format(turn))
+            else:
+                print("Invalid input. Please try again.")
 
 
-#Inputs: 2 digit selection command, board, which color's turn it is.
-#Output: True if command is valid. False if invalid. It will print an error message if false.
+# Inputs: 2 digit selection command, board, which color's turn it is.
+# Output: True if command is valid. False if invalid. It will print an error message if false.
 def val_select(command, board, turn):
     try:
         y = int(command[1])
@@ -71,16 +72,14 @@ def switch_turn(turn):
         return "black"
     return "white"
 
+# def val_output(command, board):
 
-
-#def val_output(command, board):
-
-     # p = Pawn(2, 2, "black")
-     # moves = [(2, 3), (2, -3), (5, 1)]
-     # print(p.valid_moves(moves, game_board.back_board))
-     #
-     # for i in range(8):
-     #    print(game_board.back_board[6][i].poss_moves(game_board.back_board))
+    # p = Pawn(2, 2, "black")
+    # moves = [(2, 3), (2, -3), (5, 1)]
+    # print(p.valid_moves(moves, game_board.back_board))
+    #
+    # for i in range(8):
+    #    print(game_board.back_board[6][i].poss_moves(game_board.back_board))
 
 
 
