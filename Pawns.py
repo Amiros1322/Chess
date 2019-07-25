@@ -27,13 +27,26 @@ class Pawn(Piece):
             first_y = 6
 
         # puts all squares pawn could possibly go to into a list poss_moves
-        poss_moves = [(self.x, self.y + change), (self.x + 1, self.y + change), (self.x - 1, self.y + change)]
+        poss_moves = []
+        if back_board[self.y + 1*change][self.x] is None:
+            poss_moves.append((self.x, self.y + 1*change))
 
         # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
-        if self.y == first_y:
+        if self.y == first_y and back_board[self.y + 2*change][self.x] is None:
             poss_moves.append((self.x, self.y + 2*change))
 
-        poss_moves = self.valid_moves(poss_moves, back_board)
+        try:
+            if back_board[self.y + 1*change][self.x + 1].color != self.color:
+                poss_moves.append((self.x + 1, self.y + 1*change))
+        except:
+            pass
+        try:
+            if back_board[self.y + 1*change][self.x - 1].color != self.color:
+                poss_moves.append((self.x - 1, self.y + 1*change))
+        except:
+            pass
+
+        # poss_moves = self.valid_moves(poss_moves, back_board)
 
         # TODO: Make it so pawns can't eat while moving forward
 
