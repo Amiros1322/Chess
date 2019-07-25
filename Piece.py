@@ -16,10 +16,10 @@ class Piece(object, metaclass = ABCMeta):
         # elif self is Pawns:
         #     self.en_passant = False
 
-        board.back_board[self.x][self.y] = None
-        board.back_board[new_x][new_y] = self
-        board.str_board[self.x][self.y] = "_"
-        board.str_board[new_x][new_y] = str(self)
+        board.back_board[self.y][self.x] = None
+        board.back_board[new_y][new_x] = self
+        board.str_board[self.y][self.x] = "_"
+        board.str_board[new_y][new_x] = str(self)
 
         self.x = new_x
         self.y = new_y
