@@ -8,24 +8,24 @@ class Piece(object, metaclass = ABCMeta):
         self.y = y
         self.color = color
 
-    #move: moves a piece from it's current location to the specified one.
-    def move(self, new_x, new_y, back_board, str_board):
-        #Checks if an en passant can be done on the pawn.
+    # move: moves a piece from it's current location to the specified one.
+    def move(self, new_x, new_y, board):
+        # Checks if an en passant can be done on the pawn.
         # if self is Pawns and math.fabs(new_y - self.y):
         #     self.en_passant = True
         # elif self is Pawns:
         #     self.en_passant = False
 
-        back_board[self.x][self.y] = None
-        back_board[new_x][new_y] = self
-        str_board[self.x][self.y] = "_"
-        str_board[new_x][new_y] = str(self)
-        print(str_board[new_x][new_y])
+        board.back_board[self.x][self.y] = None
+        board.back_board[new_x][new_y] = self
+        board.str_board[self.x][self.y] = "_"
+        board.str_board[new_x][new_y] = str(self)
+
         self.x = new_x
         self.y = new_y
 
-    #given a list of possible moves for the piece, it returns a list with only the elements that are on the board and
-    #unoccupied by an enemy piece. Moves are in a tuple format (x value, y value).
+    # given a list of possible moves for the piece, it returns a list with only the elements that are on the board and
+    # unoccupied by an enemy piece. Moves are in a tuple format (x value, y value).
     def valid_moves(self, poss_moves, back_board):
         i = 0
         while i < len(poss_moves):

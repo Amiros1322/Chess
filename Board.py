@@ -22,16 +22,20 @@ class Board:
     # gets a list of possible moves and marks them on the board. Currently only marks empty squares.
     # TODO: Make it so show_selection shows when a piece can eat an enemy piece.
     def show_selection(self, moves):
-        #erases previous marks.
-        for Y_index, i in enumerate(self.str_board):
-            for X_index, j in enumerate(i):
-                if j == '?':
-                    self.str_board[Y_index][X_index] = '_'
+        self.clear_selection()
 
-        #marks possible moves
+        # marks possible moves
         for item in moves:
             x = item[0]
             y = item[1]
             if self.back_board[y][x] is None:
                 self.str_board[y][x] = '?'
         self.print_front()
+
+    # erases previous selection marks.
+    def clear_selection(self):
+
+        for Y_index, i in enumerate(self.str_board):
+            for X_index, j in enumerate(i):
+                if j == '?':
+                    self.str_board[Y_index][X_index] = '_'

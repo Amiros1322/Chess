@@ -1,15 +1,15 @@
 from Piece import Piece
 from Queen import Queen
 
+
 class Pawn(Piece):
-    #TODO: implement en passant. when you move a pawn check if you moved it 2 spaces. if you did turn en passant true
+
+    # TODO: implement en passant. when you move a pawn check if you moved it 2 spaces. if you did turn en passant true
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         # if a pawn moves 2 squares, an opponent may do take the piece and move to the first
         # square the pawn moved past.
         self.en_passant = False
-
-
 
     def __str__(self):
         if self.color == "white":
@@ -35,17 +35,10 @@ class Pawn(Piece):
 
         poss_moves = self.valid_moves(poss_moves, back_board)
 
-        i = 0
-        while i < len(poss_moves):
-            x = poss_moves[i][0]
-            y = poss_moves[i][1]
-            if back_board[y][x] is None:
-                del poss_moves[i]
-                i -= 1
-            i += 1
+        # TODO: Make it so pawns can't eat while moving forward
 
         return poss_moves
 
-    #promotes the pawn to a queen
+    # promotes the pawn to a queen
     def promote(self):
         return Queen(self.x, self.y, self.color)
