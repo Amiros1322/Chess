@@ -4,8 +4,8 @@ class LongMoves():
         squares = []
         curr_x = self.x
         curr_y = self.y
-        #Appends every square to the list if it is empty. The loop will stop once it reaces a piece or
-        #the edge of the board
+        # Appends every square to the list if it is empty.
+        # The loop will stop once it reaches an enemy piece or the edge of the board
 
         next_valid = curr_x + change_x <= 7 and curr_y + change_y <= 7 and curr_x + change_x >= 0 and \
                      curr_y + change_y >= 0

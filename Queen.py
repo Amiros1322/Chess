@@ -11,6 +11,10 @@ class Queen(Piece, Diagonal, Horizontal):
             return 'q'
         return 'Q'
 
+    @staticmethod
+    def __name__():
+        return "Queen";
+
     def poss_moves(self, b_board):
         squares = self.all_diag(b_board)
         squares.extend(self.horizontal_moves(b_board))

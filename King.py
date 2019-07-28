@@ -9,6 +9,9 @@ class King(Piece):
             return 'k'
         return 'K'
 
+    @staticmethod
+    def __name__():
+        return "King"
     "TODO: possible improvement here, making a nested for loop (1 loop for each coordinate - each \
     runs through the three possiblities for that coordinate, and checks if it is open or not with \
     try except."

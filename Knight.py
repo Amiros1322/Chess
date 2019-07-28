@@ -9,6 +9,10 @@ class Knight(Piece):
             return 'n'
         return 'N'
 
+    @staticmethod
+    def __name__():
+        return "Knight"
+
     #returns in proper (x, y) format
     def old_poss_moves(self, board):
         squares = [(self.x + 1, self.y + 2), (self.x + 2, self.y + 1), (self.x + 2, self.y - 1),

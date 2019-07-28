@@ -16,7 +16,8 @@ def Main():
     print("To select a piece, write 'sel [Piece coordinates]'. For example: 'sel 46' to select white's king pawn")
     print("The places the piece can be moved to will be highlighted, and then you will be able to use the "
            "'mov [Piece coordinates]' command to move a piece to a selected square.")
-    print("For example: 'mov 44' will move the selected pawn two squares forward")
+    print("For example: 'mov 44' will move the selected pawn two squares forward.")
+    print("To switch a selected piece input 'esc'.")
 
     game_board.print_front()
 
@@ -35,13 +36,21 @@ def Main():
                 print("Invalid input. Please try again.")
 
         # Returns the possible moves of the piece on square (x, y)
-        moves = game_board.back_board[y][x].poss_moves(game_board.back_board)
+        piece = game_board.back_board[y][x]
+        moves = piece.poss_moves(game_board.back_board)
         game_board.show_selection(moves)
+        print("{0} selected".format(piece.__name__))
 
         destination = None
         while destination is None:
 
             destination = input("mov ")
+
+            # If the player wants to switch the selected piece he inputs esc.
+            if destination == 'esc':
+                turn = switch_turn(turn)
+                break
+
             if val_move(destination, moves):
                 x1 = selected[0]
                 y1 = selected[1]
@@ -55,7 +64,7 @@ def Main():
         turn = switch_turn(turn)
         game_board.clear_selection()
         game_board.print_front()
-        print("Move successful. It is {0}'s turn. ".format(turn))
+        print("It is {0}'s turn. ".format(turn))
 
 
 # Inputs: 2 digit selection command, board, which color's turn it is.

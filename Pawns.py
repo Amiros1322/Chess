@@ -16,6 +16,10 @@ class Pawn(Piece):
             return 'p'
         return 'P'
 
+    @staticmethod
+    def __name__():
+        return "Pawn"
+
     def poss_moves(self, back_board):
         # all pawn movements are one or two squares, but in different directions and with different starting
         # squares depending on the color of the piece.
@@ -55,3 +59,4 @@ class Pawn(Piece):
     # promotes the pawn to a queen
     def promote(self):
         return Queen(self.x, self.y, self.color)
+
