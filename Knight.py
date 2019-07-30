@@ -13,15 +13,15 @@ class Knight(Piece):
     def __name__():
         return "Knight"
 
-    #returns in proper (x, y) format
+    # returns in proper (x, y) format
     def old_poss_moves(self, board):
         squares = [(self.x + 1, self.y + 2), (self.x + 2, self.y + 1), (self.x + 2, self.y - 1),
                    (self.x + 1, self.y - 2), (self.x - 1, self.y - 2), (self.x - 2, self.y - 1),
                    (self.x - 2, self.y + 1), (self.x - 1, self.y + 2)]
 
-        #Possible exceptions: None does not have color. In this case we don't delete the square
-        #loops over the squares and deletes invalid squares. Stops once it makes a full iteration without deleting
-        #anything.
+        # Possible exceptions: None does not have color. In this case we don't delete the square
+        # loops over the squares and deletes invalid squares. Stops once it makes a full iteration without deleting
+        # anything.
         i = 0
         while i < len(squares):
             try:

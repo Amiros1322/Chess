@@ -21,6 +21,10 @@ def Main():
 
     game_board.print_front()
 
+    # For implementing en passant, castling, and checkmate we need to keep
+    # a list of which squares both pieces can move to.
+
+
     while not game_over:
         selected = None
 
@@ -39,7 +43,7 @@ def Main():
         piece = game_board.back_board[y][x]
         moves = piece.poss_moves(game_board.back_board)
         game_board.show_selection(moves)
-        print("{0} selected".format(piece.__name__))
+        print("{0} selected".format(piece.__name__()))
 
         destination = None
         while destination is None:
@@ -130,6 +134,16 @@ def construct_board():
         board.append(pawn_line)
         board.append(white_back)
     return board
+
+
+# Gets all the squares pieces from the chosen color can move to next turn.
+def team_threats(color, back_board):
+    threats = []
+    for i in back_board:
+        for piece in i:
+            if piece is not None and piece.color == "black":
+                threats.append(piece.poss_moves())
+    return threats
 
 
 if __name__ == '__main__':
