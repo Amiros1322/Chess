@@ -20,7 +20,7 @@ class Board:
             print(index, i)
 
     # gets a list of possible moves and marks them on the board. Currently only marks empty squares.
-    # TODO: Make it so show_selection shows when a piece can eat an enemy piece.
+    # TODO: Make it so show_selection shows when a piece can eat an enemy piece. (want to abandon this)
     def show_selection(self, moves):
         self.clear_selection()
 

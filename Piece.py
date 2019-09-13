@@ -11,11 +11,17 @@ class Piece(object, metaclass = ABCMeta):
     # move: moves a piece from it's current location to the specified one.
     def move(self, new_x, new_y, board):
 
-        # Checks if an en passant can be done on the pawn.
-        # if self is Pawns and math.fabs(new_y - self.y):
-        #     self.en_passant = True
-        # elif self is Pawns:
-        #     self.en_passant = False
+        # All of the pawn special cases:
+        if self.__name__ == "Pawn":
+            # Promotion
+            if new_y == 7 or new_y == 0:
+                self.promote()
+
+            # en passant
+            if math.fabs(self.y - new_y) == 2:
+                self.en_passant = True
+            else:
+                self.en_passant = False
 
         board.back_board[self.y][self.x] = None
         board.back_board[new_y][new_x] = self

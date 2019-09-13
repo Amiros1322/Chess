@@ -99,6 +99,7 @@ def val_select(command, board, turn):
         print(sys.exc_info()[0])
         return False
 
+
 # Checks if a given move is valid. dest[ination] is a tuple (x, y),
 # and moves is a list of valid moves.
 def val_move(dest, moves):
@@ -137,13 +138,25 @@ def construct_board():
 
 
 # Gets all the squares pieces from the chosen color can move to next turn.
+# Output: (piece, [array with piece moves])
 def team_threats(color, back_board):
     threats = []
     for i in back_board:
         for piece in i:
-            if piece is not None and piece.color == "black":
-                threats.append(piece.poss_moves())
+            if piece is not None and piece.color == color:
+                threats.append((piece, piece.poss_moves()))
     return threats
+
+
+# After a piece has moved, it updates the threats of the team
+def update_threats(piece, new_poss_moves, threats, old_x, old_y):
+    for i in threats:
+        if (old_x, old_y) in i[1]:
+            i[0]
+        if piece is i[0]:
+            i[1] = new_poss_moves
+
+
 
 
 if __name__ == '__main__':

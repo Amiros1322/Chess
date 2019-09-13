@@ -30,9 +30,10 @@ class Pawn(Piece):
             change = -1
             first_y = 6
 
-        # puts all squares pawn could possibly go to into a list poss_moves
         poss_moves = []
-        if back_board[self.y + 1*change][self.x] is None:
+
+        # adds the square in front of the pawn to poss_moves if it is empty.
+        if back_board[self.y + change][self.x] is None:
             poss_moves.append((self.x, self.y + 1*change))
 
         # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
@@ -41,22 +42,28 @@ class Pawn(Piece):
 
         try:
             if back_board[self.y + 1*change][self.x + 1].color != self.color:
-                poss_moves.append((self.x + 1, self.y + 1*change))
+                poss_moves.append((self.x + 1, self.y + change))
         except:
             pass
         try:
-            if back_board[self.y + 1*change][self.x - 1].color != self.color:
-                poss_moves.append((self.x - 1, self.y + 1*change))
+            if back_board[self.y + change][self.x - 1].color != self.color:
+                poss_moves.append((self.x - 1, self.y + change))
         except:
             pass
 
-        # poss_moves = self.valid_moves(poss_moves, back_board)
-
-        # TODO: Make it so pawns can't eat while moving forward
 
         return poss_moves
 
     # promotes the pawn to a queen
     def promote(self):
-        return Queen(self.x, self.y, self.color)
+        new_piece = input("Which piece do you want to promote the pawn to? Capitalize the first letter.")
+        valid_names = ("queen", "knight", "rook", "bishop")
+
+        while new_piece not in valid_names:
+            new_piece = input("Invalid input. Valid pieces are {0}.".format(valid_names.join()))
+
+    def take_passant(self, back_board):
+        try:
+            if back_board[self.y][self.x + 1]
+
 
