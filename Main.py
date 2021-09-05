@@ -12,10 +12,10 @@ def Main():
 
     print("Welcome to Chess!")
     print("Each piece is represented by the first letter in its' name (The lowercase pieces "
-           "are white and the uppercase pieces are black.)")
+          "are white and the uppercase pieces are black.)")
     print("To select a piece, write 'sel [Piece coordinates]'. For example: 'sel 46' to select white's king pawn")
     print("The places the piece can be moved to will be highlighted, and then you will be able to use the "
-           "'mov [Piece coordinates]' command to move a piece to a selected square.")
+          "'mov [Piece coordinates]' command to move a piece to a selected square.")
     print("For example: 'mov 44' will move the selected pawn two squares forward.")
     print("To switch a selected piece input 'esc'.")
 
@@ -24,13 +24,14 @@ def Main():
     # For implementing en passant, castling, and checkmate we need to keep
     # a list of which squares both pieces can move to.
 
-
     while not game_over:
         selected = None
 
         # Selects a white piece
         while selected is None:
             command = input("sel ")  # gets the coordinates as input
+
+            # TODO: implement editing mode where you can move pieces even to invalid squares.
 
             if val_select(command, game_board, turn):
                 y = int(command[1])
@@ -155,8 +156,6 @@ def update_threats(piece, new_poss_moves, threats, old_x, old_y):
             i[0]
         if piece is i[0]:
             i[1] = new_poss_moves
-
-
 
 
 if __name__ == '__main__':

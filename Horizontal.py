@@ -1,5 +1,7 @@
 from abc import ABCMeta
 from LongMoves import LongMoves
+
+
 class Horizontal(LongMoves):
     def horizontal_moves(self, b_board):
         squares = []

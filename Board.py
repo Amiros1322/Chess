@@ -1,17 +1,18 @@
 import Helper
+
+
 class Board:
 
     def __init__(self):
         self.str_board = Helper.str_board()
         self.back_board = Helper.back_board()
 
-
     def print_back(self):
         for i in self.back_board:
             print(i)
 
     # A function to improve readability of the move function - this way it can be called from the board.
-    def movePiece(self, old_x, old_y, new_x, new_y,):
+    def movePiece(self, old_x, old_y, new_x, new_y, ):
         self.back_board[old_y][old_x].move(new_x, new_y, self.back_board, self.str_board)
 
     def print_front(self):
@@ -20,7 +21,7 @@ class Board:
             print(index, i)
 
     # gets a list of possible moves and marks them on the board. Currently only marks empty squares.
-    # TODO: Make it so show_selection shows when a piece can eat an enemy piece. (want to abandon this)
+    # TODO: Make it so show_selection shows when a piece can eat an enemy piece. (with curses?)
     def show_selection(self, moves):
         self.clear_selection()
 
