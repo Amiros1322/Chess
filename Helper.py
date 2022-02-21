@@ -29,6 +29,7 @@ def str_board():
         board = [back_line, black_pawns, empty1, empty2, empty3, empty4, pawn_line, white_back]
 
         return board
+
 def back_board():
     black_back = [Rook(0,0,"black"), Knight(1,0,"black"), Bishop(2,0,"black"), Queen(3,0,"black"),
                  King(4,0,"black"), Bishop(5,0,"black"), Knight(6,0,"black"), Rook(7,0,"black")]
