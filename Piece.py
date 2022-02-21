@@ -13,12 +13,6 @@ class Piece(object, metaclass=ABCMeta):
     # move: moves a piece from it's current location to the specified one.
     def move(self, new_x, new_y, board):
 
-        # All of the pawn special cases:
-        if self.__name__ == "Pawn":
-            # Promotion
-            if new_y == 7 or new_y == 0:
-                self.promote()
-
             # deletes en_passant if it wasn't eaten en_passant.
         # if Pawns.en_passant:
         #       board.str_board[self.y - 1][self.x] = "_"
@@ -33,7 +27,7 @@ class Piece(object, metaclass=ABCMeta):
         board.str_board[self.y][self.x] = "_"
         board.str_board[new_y][new_x] = str(self)
 
-        # en passant
+        # en passant checl
         if self.__name__ == "Pawn" and math.fabs(self.y - new_y) == 2:
             board.back_board[self.y][self.x] = self
             board.str_board[self.y][self.x] = "-"
@@ -41,6 +35,12 @@ class Piece(object, metaclass=ABCMeta):
 
         self.x = new_x
         self.y = new_y
+
+        # promotion check (Replaces piece with a new one)
+        if self.__name__ == "Pawn":
+            # Promotion
+            if new_y == 7 or new_y == 0:
+                self.promote(board)
 
     # given a list of possible moves for the piece, it returns a list with only the elements that are on the board and
     # unoccupied by an enemy piece. Moves are in a tuple format (x value, y value).
