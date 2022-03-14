@@ -27,7 +27,7 @@ class Piece(object, metaclass=ABCMeta):
         board.str_board[self.y][self.x] = "_"
         board.str_board[new_y][new_x] = str(self)
 
-        # en passant checl
+        # en passant check
         if self.__name__ == "Pawn" and math.fabs(self.y - new_y) == 2:
             board.back_board[self.y][self.x] = self
             board.str_board[self.y][self.x] = "-"
