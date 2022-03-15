@@ -13,7 +13,7 @@ class Piece(object, metaclass=ABCMeta):
     # move: moves a piece from it's current location to the specified one.
     def move(self, new_x, new_y, board):
 
-            # deletes en_passant if it wasn't eaten en_passant.
+        # deletes en_passant if it wasn't eaten en_passant.
         # if Pawns.en_passant:
         #       board.str_board[self.y - 1][self.x] = "_"
         # board.back_board[self.y - 1][self.x] = None
@@ -45,15 +45,15 @@ class Piece(object, metaclass=ABCMeta):
     # given a list of possible moves for the piece, it returns a list with only the elements that are on the board and
     # unoccupied by an enemy piece. Moves are in a tuple format (x value, y value).
     def valid_moves(self, poss_moves, back_board):
-        i = 0
-        while i < len(poss_moves):
-            x = poss_moves[i][0]
-            y = poss_moves[i][1]
+        def valid_move(move):
+            x = move[0]
+            y = move[1]
             if (
-                    min(poss_moves[i]) < 0 or max(poss_moves[i]) > 7 or
+                    min(move) < 0 or max(move) > 7 or
                     (back_board[y][x] is not None and back_board[y][x].color == self.color)
             ):
-                poss_moves.remove(poss_moves[i])
-                i -= 1
-            i += 1
-        return poss_moves
+                return False
+            return True
+
+        poss_moves = filter(valid_move, poss_moves)
+        return list(poss_moves)

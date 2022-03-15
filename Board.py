@@ -17,7 +17,7 @@ class Board:
             print(i)
 
     # A function to improve readability of the move function - this way it can be called from the board.
-    def move_piece(self, old_x, old_y, new_x, new_y, ):
+    def move_piece(self, old_x, old_y, new_x, new_y):
         self.back_board[old_y][old_x].move(new_x, new_y, self.back_board, self.str_board)
 
     def print_front(self):
