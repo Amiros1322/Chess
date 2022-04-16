@@ -157,7 +157,7 @@ def update_threats(piece, new_poss_moves, threats, old_x, old_y):
         if piece is i[0]:
             i[1] = new_poss_moves
 
-import GUI
+import PyGameGUI
 if __name__ == '__main__':
     # Main()
-    GUI
+    PyGameGUI
