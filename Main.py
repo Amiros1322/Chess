@@ -1,5 +1,4 @@
 import Knight, Bishop, Rook, Queen, King
-import PyGameGUI
 from Board import Board
 from Pawns import Pawn
 import sys
