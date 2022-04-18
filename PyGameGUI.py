@@ -23,12 +23,23 @@ class Player(pygame.sprite.Sprite):
 
 # settings, constants
 pygame.display.set_caption("Chess")
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 
 # start window (returns surface)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 player = Player()
+king_img = pygame.image.load('images/King.png')
+images_2d = [[], [], [], [], [], [], [], []]  # surfaces on that are squares in the game
+SQUARE_LENGTH = 85
+
+for row in range(8):
+    for col in range(8):
+        images_2d[row].append(pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH)))
+        if (row + col) % 2 == 0:
+            images_2d[row][col].fill((250, 250, 250))
+        else:
+            images_2d[row][col].fill((128, 128, 128))
 
 # run loop
 running = True
@@ -44,14 +55,12 @@ while running:
 
         # Fill background with white
         screen.fill((0, 0, 0))
-
-        # create a surface. Inputs are its length and width
-        # surf = pygame.Surface((50, 50))
-        # surf.fill((50, 25, 0))
-        # rect = surf.get_rect()  # access the surface's underlying rectangle
-
+        images_2d[4][4].blit(king_img, (SQUARE_LENGTH/2 - 15,SQUARE_LENGTH/2 - 15))
+        for row in range(8):
+            for col in range(8):
+                screen.blit(images_2d[row][col], (row*SQUARE_LENGTH, col*SQUARE_LENGTH))
         # blit (block transfer) of the surface onto the screen. Tuple is draw location
-        screen.blit(player.surf, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+        #screen.blit(King_img, (0, 0))
 
         # Flip display
         pygame.display.flip()

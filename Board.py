@@ -64,6 +64,9 @@ class Board:
                     if j == '?':
                         self.str_board[Y_index][X_index] = '_'
 
+    def pen_rep(self):
+        raise NotImplementedError
+
     # creates new string board representation
     def __new_str_board(self):
         back_line = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
@@ -105,3 +108,5 @@ class Board:
         back_board = [black_back, black_pawns, empty1, empty2, empty3, empty4, white_pawns, white_back]
 
         return back_board
+
+
