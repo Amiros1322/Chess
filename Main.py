@@ -6,7 +6,7 @@ import sys
 
 def Main():
     game_board = Board()
-
+    USEGUI = False
     game_over = False
     turn = "white"
 
@@ -157,7 +157,5 @@ def update_threats(piece, new_poss_moves, threats, old_x, old_y):
         if piece is i[0]:
             i[1] = new_poss_moves
 
-import PyGameGUI
 if __name__ == '__main__':
-    # Main()
-    PyGameGUI
+    Main()

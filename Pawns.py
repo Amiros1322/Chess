@@ -85,3 +85,9 @@ class Pawn(Piece):
         try:
             if back_board[self.y][self.x + 1]
     """
+
+    # TODO: Implement. Should call piece's move function and then promote if its at the end.
+    """
+    def move(self, new_x, new_y, board):
+        super(Pawn, self).move()
+    """

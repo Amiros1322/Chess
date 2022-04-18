@@ -5,13 +5,22 @@ from Bishop import Bishop
 from Rook import Rook
 from Queen import Queen
 from King import King
+from cmd_prints import CmdPrints
 
 class Board:
 
-    def __init__(self):
-        self.str_board = self.__new_str_board()
+    def __init__(self, use_gui=False):
+
+        # originally used 2d arr for board implementation because of string formatting
+        # problems. Should refactor to 1 board
+        self.is_gui=use_gui
+        if use_gui:
+            self.str_board = self.__new_gui_board() #TODO: implement GUI board
+        else:
+            self.str_board = self.__new_str_board()
         self.back_board = self.__new_back_board()
 
+    # Not used anywhere. Was for debugging
     def print_back(self):
         for i in self.back_board:
             print(i)
@@ -21,30 +30,39 @@ class Board:
         self.back_board[old_y][old_x].move(new_x, new_y, self.back_board, self.str_board)
 
     def print_front(self):
-        print(" ", ['0', '1', '2', '3', '4', '5', '6', '7'])
-        for index, i in enumerate(self.str_board):
-            print(index, i)
+        if self.is_gui:
+            raise NotImplementedError
+        else:
+            print(" ", ['0', '1', '2', '3', '4', '5', '6', '7'])
+            for index, i in enumerate(self.str_board):
+                print(index, i)
 
     # gets a list of possible moves and marks them on the board. Currently only marks empty squares.
     # TODO: Make it so show_selection shows when a piece can eat an enemy piece. (with curses?)
     def show_selection(self, moves):
-        self.clear_selection()
+        if self.is_gui:
+            raise NotImplementedError
+        else:
+            self.clear_selection()
 
-        # marks possible moves
-        for item in moves:
-            x = item[0]
-            y = item[1]
-            if self.back_board[y][x] is None:
-                self.str_board[y][x] = '?'
-        self.print_front()
+            # marks possible moves
+            for item in moves:
+                x = item[0]
+                y = item[1]
+                if self.back_board[y][x] is None:
+                    self.str_board[y][x] = '?'
+            self.print_front()
 
     # erases previous selection marks.
     def clear_selection(self):
 
-        for Y_index, i in enumerate(self.str_board):
-            for X_index, j in enumerate(i):
-                if j == '?':
-                    self.str_board[Y_index][X_index] = '_'
+        if self.is_gui:
+            raise NotImplementedError
+        else:
+            for Y_index, i in enumerate(self.str_board):
+                for X_index, j in enumerate(i):
+                    if j == '?':
+                        self.str_board[Y_index][X_index] = '_'
 
     # creates new string board representation
     def __new_str_board(self):
@@ -63,6 +81,10 @@ class Board:
         board = [back_line, black_pawns, empty1, empty2, empty3, empty4, pawn_line, white_back]
 
         return board
+
+    def __new_gui_board(self):
+        #TODO: implement
+        raise NotImplementedError
 
     # creates new object board representation
     def __new_back_board(self):

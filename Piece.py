@@ -1,11 +1,18 @@
 from abc import ABCMeta, abstractmethod
+from copy import deepcopy, copy
 import math
-
 
 class Piece(object, metaclass=ABCMeta):
 
     @abstractmethod
-    def __init__(self, x, y, color):
+    def __init__(self, x, y, color, sprite=None):
+        # add a check that the sprite is actually a sprite
+        if sprite is None:
+            self._is_gui = False
+        else:
+            self._is_gui = True
+
+        self._sprite = sprite
         self.x = x
         self.y = y
         self.color = color
@@ -24,8 +31,8 @@ class Piece(object, metaclass=ABCMeta):
 
         board.back_board[self.y][self.x] = None
         board.back_board[new_y][new_x] = self
-        board.str_board[self.y][self.x] = "_"
-        board.str_board[new_y][new_x] = str(self)
+        board.str_board[self.y][self.x] = self.empty_vis()
+        board.str_board[new_y][new_x] = self.visualization()
 
         # en passant check
         if self.__name__ == "Pawn" and math.fabs(self.y - new_y) == 2:
@@ -57,3 +64,19 @@ class Piece(object, metaclass=ABCMeta):
 
         poss_moves = filter(valid_move, poss_moves)
         return list(poss_moves)
+
+    def visualization(self):
+        if self._is_gui:
+            if self._sprite is not None:
+                return deepcopy(self._sprite)
+            else:
+                raise ValueError
+        else:
+            return str(self)
+
+    def empty_vis(self):
+        if self._is_gui:
+            # The sprite if there is nothing there
+            raise NotImplementedError
+        else:
+            return '_'
