@@ -30,6 +30,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 player = Player()
 king_img = pygame.image.load('images/King.png')
+print(king_img)
+#king_img.set_colorkey((250, 250, 250))
 images_2d = [[], [], [], [], [], [], [], []]  # surfaces on that are squares in the game
 SQUARE_LENGTH = 85
 
@@ -55,7 +57,7 @@ while running:
 
         # Fill background with white
         screen.fill((0, 0, 0))
-        images_2d[4][4].blit(king_img, (SQUARE_LENGTH/2 - 15,SQUARE_LENGTH/2 - 15))
+        images_2d[4][3].blit(king_img, (SQUARE_LENGTH/2 - 15,SQUARE_LENGTH/2 - 15))
         for row in range(8):
             for col in range(8):
                 screen.blit(images_2d[row][col], (row*SQUARE_LENGTH, col*SQUARE_LENGTH))
