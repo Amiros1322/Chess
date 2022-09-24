@@ -159,5 +159,5 @@ def update_threats(piece, new_poss_moves, threats, old_x, old_y):
             i[1] = new_poss_moves
 
 if __name__ == '__main__':
-    #Main()
+    # Main()
     pass

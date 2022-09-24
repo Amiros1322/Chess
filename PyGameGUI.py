@@ -23,29 +23,57 @@ class Player(pygame.sprite.Sprite):
 
 # settings, constants
 pygame.display.set_caption("Chess")
+FPS = 60
+clock = pygame.time.Clock()
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
+BOARD_LENGTH = 8
 
 # start window (returns surface)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 player = Player()
 king_img = pygame.image.load('images/King.png')
-print(king_img)
-#king_img.set_colorkey((250, 250, 250))
-images_2d = [[], [], [], [], [], [], [], []]  # surfaces on that are squares in the game
+queen_img = pygame.image.load('images/queen.png')
+images_2d = [[None for i in range(BOARD_LENGTH)] for j in range(BOARD_LENGTH)]  # Makes 2d list with Nones
 SQUARE_LENGTH = 85
 
-for row in range(8):
-    for col in range(8):
-        images_2d[row].append(pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH)))
-        if (row + col) % 2 == 0:
-            images_2d[row][col].fill((250, 250, 250))
-        else:
-            images_2d[row][col].fill((128, 128, 128))
+# fills empty board sizes with corresponding
+def draw_board(board):
+    for row in range(BOARD_LENGTH):
+        for col in range(BOARD_LENGTH):
+            if board[row][col] is None:
+                board[row][col] = pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH))
+                if (row + col) % 2 == 0:
+                    board[row][col].fill((250, 250, 250))  # White
+                else:
+                    board[row][col].fill((128, 128, 128))  # Grey
+
+def render_board(board):
+    # Fill background with white
+    screen.fill((0, 0, 0))
+    for row in range(8):
+        for col in range(8):
+            screen.blit(board[row][col], (row * SQUARE_LENGTH, col * SQUARE_LENGTH))
+
+def draw_image(board):
+    # king starting position
+    board[2][2] = king_img
+    board[5][4] = queen_img
+
+
+print(images_2d)
+draw_image(images_2d)
+
+print(images_2d[2][2])
+print(images_2d[5][4])
+# Make surfaces for each squares and fill with colored surface if empty
+draw_board(images_2d)
 
 # run loop
 running = True
 while running:
+    # set game to run at 60 FPS. (changing this will change 'speed' of the game)
+    clock.tick(FPS)
 
     # event handler
     for event in pygame.event.get():
@@ -55,17 +83,14 @@ while running:
             if event.key == K_ESCAPE:
                 running = False
 
-        # Fill background with white
-        screen.fill((0, 0, 0))
-        images_2d[4][3].blit(king_img, (SQUARE_LENGTH/2 - 15,SQUARE_LENGTH/2 - 15))
-        for row in range(8):
-            for col in range(8):
-                screen.blit(images_2d[row][col], (row*SQUARE_LENGTH, col*SQUARE_LENGTH))
         # blit (block transfer) of the surface onto the screen. Tuple is draw location
-        #screen.blit(King_img, (0, 0))
+        # screen.blit(king_img, (0, 0))
 
-        # Flip display
-        pygame.display.flip()
+
+    render_board(images_2d)
+
+    # Flip display
+    pygame.display.flip()
 
 pygame.quit()
 
