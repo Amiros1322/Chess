@@ -129,7 +129,7 @@ draw_image(images_2d)
 # run loop
 running = True
 while running:
-    # set game to run at 60 FPS. (changing this will change 'speed' of the game)
+    # set game FPS. (changing this will change 'speed' of the game)
     clock.tick(FPS)
 
     # event handler
