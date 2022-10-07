@@ -1,8 +1,8 @@
 from Piece import Piece
 class King(Piece):
 
-    def __init__(self, x, y, color):
-        super().__init__(x, y, color)
+    def __init__(self, x, y, color, sprite=None):
+        super().__init__(x, y, color, sprite=sprite)
         self.can_castle = True
 
     def __str__(self):

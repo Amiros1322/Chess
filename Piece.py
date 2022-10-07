@@ -6,13 +6,15 @@ class Piece(object, metaclass=ABCMeta):
 
     @abstractmethod
     def __init__(self, x, y, color, sprite=None):
+
         # add a check that the sprite is actually a sprite
         if sprite is None:
             self._is_gui = False
         else:
             self._is_gui = True
-
         self._sprite = sprite
+
+
         self.x = x
         self.y = y
         self.color = color
@@ -76,7 +78,7 @@ class Piece(object, metaclass=ABCMeta):
 
     def empty_vis(self):
         if self._is_gui:
-            # The sprite if there is nothing there
-            raise NotImplementedError
+            # The sprite if there is nothing there (empty square returned on None)
+            return None
         else:
             return '_'

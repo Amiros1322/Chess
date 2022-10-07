@@ -9,16 +9,33 @@ from cmd_prints import CmdPrints
 
 class Board:
 
-    def __init__(self, use_gui=False):
+    def __init__(self, sprite_dict=None):
 
         # originally used 2d arr for board implementation because of string formatting
         # problems. Should refactor to 1 board
-        self.is_gui=use_gui
+
+        if sprite_dict is None:
+            use_gui = False
+            self.sprite_dict = {"pawn": {"white": None, "black": None}, "knight": {"white": None, "black": None},
+                                "bishop": {"white": None, "black": None}, "rook": {"white": None, "black": None},
+                                "queen": {"white": None, "black": None}, "king": {"white": None, "black": None}}
+        elif self._spirte_dict_val(sprite_dict):
+            use_gui = True
+            self.sprite_dict = sprite_dict
+        else:
+            raise Exception("Invalid Sprite_dict")
+
+        self.back_board = self.__new_back_board()
+
+        self.use_gui = use_gui
+
         if use_gui:
-            self.str_board = self.__new_gui_board() #TODO: implement GUI board
+            # self.str_board = self.__new_gui_board() #TODO: implement GUI board
+            self.move_op_mark = None
         else:
             self.str_board = self.__new_str_board()
-        self.back_board = self.__new_back_board()
+            self.move_op_mark = "?"
+
 
     # Not used anywhere. Was for debugging
     def print_back(self):
@@ -30,7 +47,7 @@ class Board:
         self.back_board[old_y][old_x].move(new_x, new_y, self.back_board, self.str_board)
 
     def print_front(self):
-        if self.is_gui:
+        if self.use_gui:
             raise NotImplementedError
         else:
             print(" ", ['0', '1', '2', '3', '4', '5', '6', '7'])
@@ -87,19 +104,24 @@ class Board:
 
     def __new_gui_board(self):
         #TODO: implement
+
         raise NotImplementedError
 
     # creates new object board representation
     def __new_back_board(self):
-        black_back = [Rook(0, 0, "black"), Knight(1, 0, "black"), Bishop(2, 0, "black"), Queen(3, 0, "black"),
-                      King(4, 0, "black"), Bishop(5, 0, "black"), Knight(6, 0, "black"), Rook(7, 0, "black")]
-        white_back = [Rook(0, 7, "white"), Knight(1, 7, "white"), Bishop(2, 7, "white"), Queen(3, 7, "white"),
-                      King(4, 7, "white"), Bishop(5, 7, "white"), Knight(6, 7, "white"), Rook(7, 7, "white")]
+        black_back = [Rook(0, 0, "black", sprite=self.sprite_dict["rook"]["black"]), Knight(1, 0, "black", sprite=self.sprite_dict["knight"]["black"]),
+                      Bishop(2, 0, "black", sprite=self.sprite_dict["bishop"]["black"]), Queen(3, 0, "black", sprite=self.sprite_dict["queen"]["black"]),
+                      King(4, 0, "black", sprite=self.sprite_dict["king"]["black"]), Bishop(5, 0, "black", sprite=self.sprite_dict["bishop"]["black"]),
+                      Knight(6, 0, "black", sprite=self.sprite_dict["knight"]["black"]), Rook(7, 0, "black", sprite=self.sprite_dict["rook"]["black"])]
+        white_back = [Rook(0, 7, "white", sprite=self.sprite_dict["rook"]["white"]), Knight(1, 7, "white", sprite=self.sprite_dict["knight"]["white"]),
+                      Bishop(2, 7, "white", sprite=self.sprite_dict["bishop"]["white"]), Queen(3, 7, "white", sprite=self.sprite_dict["queen"]["white"]),
+                      King(4, 7, "white", sprite=self.sprite_dict["king"]["white"]), Bishop(5, 7, "white", sprite=self.sprite_dict["bishop"]["white"]),
+                      Knight(6, 7, "white", sprite=self.sprite_dict["knight"]["white"]), Rook(7, 7, "white", sprite=self.sprite_dict["rook"]["white"])]
 
         white_pawns, black_pawns, empty1, empty2, empty3, empty4 = [], [], [], [], [], []
         for i in range(8):
-            white_pawns.append(Pawn(i, 6, "white"))
-            black_pawns.append(Pawn(i, 1, "black"))
+            white_pawns.append(Pawn(i, 6, "white", sprite=self.sprite_dict["pawn"]["white"]))
+            black_pawns.append(Pawn(i, 1, "black", sprite=self.sprite_dict["pawn"]["black"]))
             empty1.append(None)
             empty2.append(None)
             empty3.append(None)
@@ -108,5 +130,20 @@ class Board:
         back_board = [black_back, black_pawns, empty1, empty2, empty3, empty4, white_pawns, white_back]
 
         return back_board
+
+    # Does not check the sprites, only checks that there is one of every piece
+    #
+    def _spirte_dict_val(self, sprite_dict) -> bool:
+        input_set = set([x.lower() for x in sprite_dict.keys()])
+        if input_set != {"pawn", "knight", "bishop", "rook", "queen", "king"}:
+            print("Invalid piece keys in sprite_dict")
+            return False
+
+        for val in sprite_dict.values():
+            if set(val.keys()) != {"black", "white"}:
+                print("Invalid color values keys in sprite_dict")
+                return False
+        return True
+
 
 

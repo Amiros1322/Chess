@@ -10,8 +10,8 @@ class Pawn(Piece):
     # iterating on all of the pawns.
     en_passant = None
 
-    def __init__(self, x, y, color):
-        super().__init__(x, y, color)
+    def __init__(self, x, y, color, sprite=None):
+        super().__init__(x, y, color, sprite=sprite)
         # if a pawn moves 2 squares, an opponent may do take the piece and move to the first
         # square the pawn moved past.
 
