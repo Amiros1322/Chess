@@ -1,7 +1,4 @@
 import pygame
-from Board import Board
-from SpriteSheet import *
-from Piece import Piece
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -14,19 +11,11 @@ from pygame.locals import (
     MOUSEBUTTONUP
 )
 
-#
-# # init pygame
-# pygame.init()
-#
-# # Player sprite class
-# class Player(pygame.sprite.Sprite):
-#     def __init__(self):
-#         super(Player, self).__init__()
-#         self.surf = pygame.Surface((75, 25))
-#         self.surf.fill((255, 255, 255))  # This is supposed to be the image
-#         self.rect = self.surf.get_rect()
-#
-# # settings, constants
+from Board import Board
+from SpriteSheet import PieceSpriteSheet
+from Piece import Piece
+from Helper import val_move, val_select
+
 FPS = 24  # Chess doesnt need a high fps.
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 BOARD_LENGTH = 8
@@ -201,7 +190,6 @@ while running:
 
                 mouse_held_down = False
 
-
     # renders board in checkerboard pattern with
     render_board_2_surf(log_board.back_board, surf_1, surf_2)
 
@@ -210,26 +198,3 @@ while running:
 
 pygame.quit()
 
-# pygame.init()
-# screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-# image = pygame.image.load('images\King.png')
-#
-# run = True
-# while run:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             run = False
-#
-#     screen.fill(color2)
-#
-#     screen_w, screen_h = screen.get_size()
-#     image_w, image_h = image.get_size()
-#
-#     for x in range(0, screen_w, image_w):
-#         for y in range(0, screen_h, image_h):
-#             screen.blit(image, (x, y))
-#
-#     pygame.display.flip()
-#
-# pygame.quit()
-# exit()
