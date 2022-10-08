@@ -59,7 +59,7 @@ class Piece(object, metaclass=ABCMeta):
             y = move[1]
             if (
                     min(move) < 0 or max(move) > 7 or
-                    (back_board[y][x] is not None and back_board[y][x].color == self.color)
+                    (isinstance(back_board[y][x], Piece) and back_board[y][x].color == self.color)
             ):
                 return False
             return True
@@ -70,7 +70,7 @@ class Piece(object, metaclass=ABCMeta):
     def visualization(self):
         if self._is_gui:
             if self._sprite is not None:
-                return deepcopy(self._sprite)
+                return copy(self._sprite)
             else:
                 raise ValueError
         else:

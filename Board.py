@@ -18,7 +18,8 @@ class Board:
             use_gui = False
             self.sprite_dict = {"pawn": {"white": None, "black": None}, "knight": {"white": None, "black": None},
                                 "bishop": {"white": None, "black": None}, "rook": {"white": None, "black": None},
-                                "queen": {"white": None, "black": None}, "king": {"white": None, "black": None}}
+                                "queen": {"white": None, "black": None}, "king": {"white": None, "black": None},
+                                "select_mark": None}
         elif self._spirte_dict_val(sprite_dict):
             use_gui = True
             self.sprite_dict = sprite_dict
@@ -26,15 +27,8 @@ class Board:
             raise Exception("Invalid Sprite_dict")
 
         self.back_board = self.__new_back_board()
-
         self.use_gui = use_gui
-
-        if use_gui:
-            # self.str_board = self.__new_gui_board() #TODO: implement GUI board
-            self.move_op_mark = None
-        else:
-            self.str_board = self.__new_str_board()
-            self.move_op_mark = "?"
+        self.str_board = self.__new_str_board()
 
 
     # Not used anywhere. Was for debugging
@@ -57,24 +51,35 @@ class Board:
     # gets a list of possible moves and marks them on the board. Currently only marks empty squares.
     # TODO: Make it so show_selection shows when a piece can eat an enemy piece. (with curses?)
     def show_selection(self, moves):
-        if self.is_gui:
-            raise NotImplementedError
+        # Selects the correct graphical representation of an empty square and the board to modify
+        if self.use_gui:
+            modified_board = self.back_board
+            mark = self.sprite_dict["select_mark"]
         else:
-            self.clear_selection()
+            modified_board = self.str_board
+            mark = '_'
 
-            # marks possible moves
-            for item in moves:
-                x = item[0]
-                y = item[1]
-                if self.back_board[y][x] is None:
-                    self.str_board[y][x] = '?'
+        self.clear_selection()
+
+        # marks possible moves with
+        for item in moves:
+            x = item[0]
+            y = item[1]
+            if self.back_board[y][x] is None:
+                modified_board[y][x] = mark
+
+        # The cmd interface has to print explicitly - the gui is drawn every frame.
+        if not self.use_gui:
             self.print_front()
+
 
     # erases previous selection marks.
     def clear_selection(self):
-
-        if self.is_gui:
-            raise NotImplementedError
+        if self.use_gui:
+            for row in range(len(self.back_board)):
+                for col in range(len(self.back_board[0])):
+                    if self.back_board[col][row] == self.sprite_dict["select_mark"]:
+                        self.back_board[col][row] = None
         else:
             for Y_index, i in enumerate(self.str_board):
                 for X_index, j in enumerate(i):
@@ -134,15 +139,15 @@ class Board:
     # Does not check the sprites, only checks that there is one of every piece
     #
     def _spirte_dict_val(self, sprite_dict) -> bool:
-        input_set = set([x.lower() for x in sprite_dict.keys()])
-        if input_set != {"pawn", "knight", "bishop", "rook", "queen", "king"}:
-            print("Invalid piece keys in sprite_dict")
-            return False
+        for key, val in sprite_dict.items():
+            if key not in {"pawn", "knight", "bishop", "rook", "queen", "king", "select_mark"}:
+                print("Invalid keys in sprite_dict")
+                return False
 
-        for val in sprite_dict.values():
-            if set(val.keys()) != {"black", "white"}:
+            if key != "select_mark" and set(val.keys()) != {"black", "white"}:
                 print("Invalid color values keys in sprite_dict")
                 return False
+
         return True
 
 

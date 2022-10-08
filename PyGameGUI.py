@@ -1,6 +1,7 @@
 import pygame
 from Board import Board
 from SpriteSheet import *
+from Piece import Piece
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -10,6 +11,7 @@ from pygame.locals import (
     KEYDOWN,
     QUIT,
     MOUSEBUTTONDOWN,
+    MOUSEBUTTONUP
 )
 
 #
@@ -34,7 +36,8 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Chess")
 
 # default theme brown. TODO: Change theme option
-color_theme = {"Brown": ("#964d22", "#964d37"), "Green": ("#769656", "#eeeed2")}
+# darker color should be on the right. Otherwise square color inversed
+color_theme = {"Brown": ("#964d22", "#964d37"), "Green": ("#eeeed2", "#769656")}
 color1, color2 = color_theme["Green"]
 
 # start window (returns surface)
@@ -42,6 +45,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 king_img = pygame.image.load('images/King.png')
 queen_img = pygame.image.load('images/queen.png')
+selected_img = pygame.image.load('images/selected_mark.png')
 queen_img.set_colorkey((255, 255, 255))
 sprite_sh_img = pygame.image.load('images/output-onlinepngtools.png')
 bounding_size = 100
@@ -57,10 +61,6 @@ sprite_sheet = PieceSpriteSheet(sprite_sh_img, bounding_size, white_top=False,
 king_img_spsh = sprite_sheet.get_image("queen", False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)
 
 images_2d = [[None for i in range(BOARD_LENGTH)] for j in range(BOARD_LENGTH)]  # Makes 2d list with Nones
-
-
-def extract_spritesheet_image(board, sprite_length, sprite_width, row, column):
-    pass
 
 
 # creates 2 surfaces to use for drawing.
@@ -117,35 +117,41 @@ def render_board_2_surf(piece_board, s1, s2):
             else:  # (row + col) % 2 == 1
                 screen.blit(s2, coords)
 
-            if piece_board[row][col] != None:
-                screen.blit(piece_board[row][col]._sprite, coords)
+            if isinstance(piece_board[col][row], Piece):
+                screen.blit(piece_board[col][row]._sprite, coords)
+            elif isinstance(piece_board[col][row], pygame.Surface):
+                screen.blit(piece_board[col][row], coords)
 
 
-def draw_image(board):
-    # king starting position
-    board[2][1] = king_img
-    board[5][4] = pygame.transform.scale(queen_img, (SQUARE_LENGTH, SQUARE_LENGTH))
-    board[5][4].set_colorkey((100, 100, 100))
-    board[6][6] = king_img_spsh
+def get_mouse_board_coordinates(square_len):
+    mx, my = pygame.mouse.get_pos()
+    row, col = mx // square_len, my // square_len
+    return row, col
+
 
 # Given a spritesheet of chess pieces, returns a dictionary mapping each piece type to its sprite:
 # {piece_name: {white: piece white sprite, black: piece black sprite}...}
-def create_sprite_dict(piece_spsh: PieceSpriteSheet):
-    piece_dict = dict()
+def create_sprite_dict(piece_spsh: PieceSpriteSheet, select_mark_image):
+    sprites = dict()
     pieces = ("pawn", "knight", "bishop", "rook", "queen", "king")
     for piece in pieces:
-        piece_dict[piece] = {"white": piece_spsh.get_image(piece, True, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH),
+        sprites[piece] = {"white": piece_spsh.get_image(piece, True, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH),
                              "black": piece_spsh.get_image(piece, False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)}
-    return piece_dict
+
+    sprites["select_mark"] = select_mark_image
+    return sprites
 
 
 # Make surfaces for each squares and fill with colored surface if empty
 surf_1, surf_2 = draw_board_surfaces(color1, color2)
-draw_image(images_2d)
 
 # Make board
-sprite_dict = create_sprite_dict(sprite_sheet)
+sprite_dict = create_sprite_dict(sprite_sheet, select_mark_image=selected_img)
 log_board = Board(sprite_dict=sprite_dict)
+
+# loop variables
+mouse_held_down = False  # Is left mouse button held down?
+selected = None
 
 # run loop
 running = True
@@ -160,9 +166,41 @@ while running:
         elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running = False
+        elif event.type == MOUSEBUTTONDOWN:
 
-        # blit (block transfer) of the surface onto the screen. Tuple is draw location
-        # screen.blit(king_img, (0, 0))
+            # Clicking a square
+            if event.button == 1:  # 1 specifies the left mouse button
+                if not mouse_held_down:
+                    row, col = get_mouse_board_coordinates(
+                        SQUARE_LENGTH)  # gets row, col of the board where mouse held down
+                    mouse_held_down = True
+
+                    # If a piece is clicked its possible moves are shown.
+                    if isinstance(log_board.back_board[col][row], Piece):
+                        selected = log_board.back_board[col][row]
+                        print(f"{selected} was selected")
+                        moves = selected.poss_moves(log_board.back_board)
+                        log_board.show_selection(moves)
+
+        elif event.type == MOUSEBUTTONUP:
+            # Mouse Drag: letting go
+            if event.button == 1:
+                row, col = get_mouse_board_coordinates(SQUARE_LENGTH)
+
+                # isinstance checks for selected surface in practice
+                if selected is not None:
+                    print(f"{selected} let go at ({row}, {col})")
+
+                    # Checking if it was just clicked or is being dragged
+                    if selected is not log_board.back_board[col][row] and isinstance(log_board.back_board[col][row], pygame.Surface):
+                        selected.move(row, col, log_board)
+                        log_board.clear_selection()
+                        selected = None
+
+
+
+                mouse_held_down = False
+
 
     # renders board in checkerboard pattern with
     render_board_2_surf(log_board.back_board, surf_1, surf_2)

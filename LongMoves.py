@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from Piece import Piece
 class LongMoves():
     def long_moves(self, back_board, change_x, change_y):
         squares = []
@@ -11,14 +12,15 @@ class LongMoves():
         next_valid = 7 >= next_x >= 0 and 7 >= next_y >= 0
 
         while next_valid:
-            if back_board[curr_y + change_y][curr_x + change_x] is None:
+            considered_square = back_board[curr_y + change_y][curr_x + change_x]
+            if not isinstance(considered_square, Piece):
                 curr_y += change_y
                 curr_x += change_x
                 squares.append((curr_x, curr_y))
 
                 next_valid = 7 >= curr_x + change_x >= 0 and 7 >= curr_y + change_y >= 0
 
-            elif back_board[curr_y + change_y][curr_x + change_x].color != self.color:
+            elif considered_square.color != self.color:
                 curr_y += change_y
                 curr_x += change_x
                 squares.append((curr_x, curr_y))
