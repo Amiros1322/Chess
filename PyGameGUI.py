@@ -47,6 +47,7 @@ sprite_sheet = PieceSpriteSheet(sprite_sh_img, bounding_size, white_top=False,
                                 piece_order=("king", "queen", "rook", "bishop",
                                              "knight", "pawn"),
                                 delta_x=168, delta_y=143, start_x=22, start_y=22)
+
 king_img_spsh = sprite_sheet.get_image("queen", False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)
 
 images_2d = [[None for i in range(BOARD_LENGTH)] for j in range(BOARD_LENGTH)]  # Makes 2d list with Nones
@@ -141,6 +142,7 @@ log_board = Board(sprite_dict=sprite_dict)
 # loop variables
 mouse_held_down = False  # Is left mouse button held down?
 selected = None
+moves = None
 
 # run loop
 running = True
@@ -159,17 +161,29 @@ while running:
 
             # Clicking a square
             if event.button == 1:  # 1 specifies the left mouse button
-                if not mouse_held_down:
-                    row, col = get_mouse_board_coordinates(
-                        SQUARE_LENGTH)  # gets row, col of the board where mouse held down
-                    mouse_held_down = True
+                moved = False
+                row, col = get_mouse_board_coordinates(
+                    SQUARE_LENGTH)  # gets row, col of the board where mouse held down
 
-                    # If a piece is clicked its possible moves are shown.
-                    if isinstance(log_board.back_board[col][row], Piece):
-                        selected = log_board.back_board[col][row]
-                        print(f"{selected} was selected")
-                        moves = selected.poss_moves(log_board.back_board)
-                        log_board.show_selection(moves)
+                # Checking if it was just clicked or is being dragged
+                if selected is not log_board.back_board[col][row] and val_move((row, col), moves):
+                    print(f"Moving {selected}")
+                    selected.move(row, col, log_board)
+                    log_board.clear_selection()
+                    selected = None
+                    moved = True
+
+
+                # If a piece is clicked its possible moves are shown.
+                if isinstance(log_board.back_board[col][row], Piece):
+                    selected = log_board.back_board[col][row]
+                    print(f"{selected} was selected")
+                    moves = selected.poss_moves(log_board.back_board)
+                    log_board.show_selection(moves)
+
+                if moved or log_board.back_board[col][row] is None:
+                    log_board.clear_selection()
+                    moves = None
 
         elif event.type == MOUSEBUTTONUP:
             # Mouse Drag: letting go
@@ -180,15 +194,8 @@ while running:
                 if selected is not None:
                     print(f"{selected} let go at ({row}, {col})")
 
-                    # Checking if it was just clicked or is being dragged
-                    if selected is not log_board.back_board[col][row] and isinstance(log_board.back_board[col][row], pygame.Surface):
-                        selected.move(row, col, log_board)
-                        log_board.clear_selection()
-                        selected = None
 
 
-
-                mouse_held_down = False
 
     # renders board in checkerboard pattern with
     render_board_2_surf(log_board.back_board, surf_1, surf_2)

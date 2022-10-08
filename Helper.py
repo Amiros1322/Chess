@@ -87,6 +87,7 @@ def val_move(dest, moves):
         for i in moves:
             if i == (x, y):
                 return True
+        return False
     except:
         print("Invalid move - you must enter a square that is selected")
         return False
