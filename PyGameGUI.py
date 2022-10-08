@@ -14,12 +14,14 @@ from pygame.locals import (
 from Board import Board
 from SpriteSheet import PieceSpriteSheet
 from Piece import Piece
-from Helper import val_move, val_select
+from Helper import val_move, val_select, switch_turn
 
 FPS = 24  # Chess doesnt need a high fps.
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
+IGNORE_TURNS = True
+MOVE_ANYWHERE = False
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Chess")
@@ -64,37 +66,6 @@ def draw_board_surfaces(c1, c2):
     return surf_1, surf_2
 
 
-def draw_board_64_surfaces(board):
-    for row in range(BOARD_LENGTH):
-        for col in range(BOARD_LENGTH):
-            board[row][col] = pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH))
-            if (row + col) % 2 == 0:
-                board[row][col].fill(color1)  # White
-            else:
-                board[row][col].fill(color2)  # Grey
-
-
-def draw_board_2_surfaces(board):
-    for row in range(BOARD_LENGTH):
-        for col in range(BOARD_LENGTH):
-            board[row][col] = pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH))
-            if (row + col) % 2 == 0:
-                board[row][col].fill(color1)  # White
-            else:
-                board[row][col].fill(color2)  # Grey
-
-
-def render_board(board):
-    # Fill background with white
-    screen.fill((255, 255, 255))
-    for row in range(BOARD_LENGTH):
-        for col in range(BOARD_LENGTH):
-            if board[row][col] != None:
-                screen.blit(board[row][col], (row * SQUARE_LENGTH, col * SQUARE_LENGTH))
-                if row == 4 and col == 1:
-                    screen.blit(king_img, (row * SQUARE_LENGTH, col * SQUARE_LENGTH))
-
-
 def render_board_2_surf(piece_board, s1, s2):
     # Fill background with white
     screen.fill((255, 255, 255))
@@ -126,7 +97,7 @@ def create_sprite_dict(piece_spsh: PieceSpriteSheet, select_mark_image):
     pieces = ("pawn", "knight", "bishop", "rook", "queen", "king")
     for piece in pieces:
         sprites[piece] = {"white": piece_spsh.get_image(piece, True, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH),
-                             "black": piece_spsh.get_image(piece, False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)}
+                          "black": piece_spsh.get_image(piece, False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)}
 
     sprites["select_mark"] = select_mark_image
     return sprites
@@ -143,6 +114,7 @@ log_board = Board(sprite_dict=sprite_dict)
 mouse_held_down = False  # Is left mouse button held down?
 selected = None
 moves = None
+turn = "white"
 
 # run loop
 running = True
@@ -166,16 +138,21 @@ while running:
                     SQUARE_LENGTH)  # gets row, col of the board where mouse held down
 
                 # Checking if it was just clicked or is being dragged
-                if selected is not log_board.back_board[col][row] and val_move((row, col), moves):
+                if selected is not log_board.back_board[col][row] and val_move((row, col), moves) or \
+                        (MOVE_ANYWHERE and moves is not None):
+
                     print(f"Moving {selected}")
                     selected.move(row, col, log_board)
                     log_board.clear_selection()
+
+                    turn = switch_turn(turn)
                     selected = None
                     moved = True
 
-
                 # If a piece is clicked its possible moves are shown.
-                if isinstance(log_board.back_board[col][row], Piece):
+                if isinstance(log_board.back_board[col][row], Piece) and (
+                        IGNORE_TURNS or turn == log_board.back_board[col][row].color):
+
                     selected = log_board.back_board[col][row]
                     print(f"{selected} was selected")
                     moves = selected.poss_moves(log_board.back_board)
@@ -194,9 +171,6 @@ while running:
                 if selected is not None:
                     print(f"{selected} let go at ({row}, {col})")
 
-
-
-
     # renders board in checkerboard pattern with
     render_board_2_surf(log_board.back_board, surf_1, surf_2)
 
@@ -204,4 +178,3 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
-

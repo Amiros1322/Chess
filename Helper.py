@@ -1,3 +1,5 @@
+import sys
+
 from Piece import Piece
 from Pawns import Pawn
 from Knight import Knight
@@ -113,3 +115,35 @@ def construct_board():
         board.append(pawn_line)
         board.append(white_back)
     return board
+
+
+"""Unused - here in case there will be a use."""
+# def draw_board_64_surfaces(board):
+#     for row in range(BOARD_LENGTH):
+#         for col in range(BOARD_LENGTH):
+#             board[row][col] = pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH))
+#             if (row + col) % 2 == 0:
+#                 board[row][col].fill(color1)  # White
+#             else:
+#                 board[row][col].fill(color2)  # Grey
+#
+#
+# def draw_board_2_surfaces(board):
+#     for row in range(BOARD_LENGTH):
+#         for col in range(BOARD_LENGTH):
+#             board[row][col] = pygame.Surface((SQUARE_LENGTH, SQUARE_LENGTH))
+#             if (row + col) % 2 == 0:
+#                 board[row][col].fill(color1)  # White
+#             else:
+#                 board[row][col].fill(color2)  # Grey
+#
+#
+# def render_board(board):
+#     # Fill background with white
+#     screen.fill((255, 255, 255))
+#     for row in range(BOARD_LENGTH):
+#         for col in range(BOARD_LENGTH):
+#             if board[row][col] != None:
+#                 screen.blit(board[row][col], (row * SQUARE_LENGTH, col * SQUARE_LENGTH))
+#                 if row == 4 and col == 1:
+#                     screen.blit(king_img, (row * SQUARE_LENGTH, col * SQUARE_LENGTH))
