@@ -38,7 +38,13 @@ class Board:
 
     # A function to improve readability of the move function - this way it can be called from the board.
     def move_piece(self, old_x, old_y, new_x, new_y):
-        self.back_board[old_y][old_x].move(new_x, new_y, self.back_board, self.str_board)
+        piece = self.back_board[old_y][old_x]
+        piece.move(new_x, new_y, self)
+
+        # check for promotion
+        if piece.__name__() == "Pawn" and (
+                (new_y == 0 and piece.color == "white") or (new_y == 7 and piece.color == "black")):
+            self.back_board[new_y][new_x] = Queen(new_x, new_y, piece.color, sprite=self.sprite_dict["queen"][piece.color])
 
     def print_front(self):
         if self.use_gui:

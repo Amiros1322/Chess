@@ -14,13 +14,14 @@ from pygame.locals import (
 from Board import Board
 from SpriteSheet import PieceSpriteSheet
 from Piece import Piece
+from King import King
 from Helper import val_move, val_select, switch_turn
 
 FPS = 24  # Chess doesnt need a high fps.
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
-IGNORE_TURNS = True
+IGNORE_TURNS = False
 MOVE_ANYWHERE = False
 
 clock = pygame.time.Clock()
@@ -40,10 +41,6 @@ selected_img = pygame.image.load('images/selected_mark.png')
 queen_img.set_colorkey((255, 255, 255))
 sprite_sh_img = pygame.image.load('images/output-onlinepngtools.png')
 bounding_size = 100
-# king_img_spsh = pygame.Surface((bounding_size, bounding_size))
-# king_img_spsh.blit(sprite_sh_img, (0, 0), (22, 22, bounding_size, bounding_size))
-# king_img_spsh = pygame.transform.scale(king_img_spsh, (SQUARE_LENGTH, SQUARE_LENGTH))
-# king_img_spsh.set_colorkey((0,0,0))
 
 sprite_sheet = PieceSpriteSheet(sprite_sh_img, bounding_size, white_top=False,
                                 piece_order=("king", "queen", "rook", "bishop",
@@ -115,6 +112,7 @@ mouse_held_down = False  # Is left mouse button held down?
 selected = None
 moves = None
 turn = "white"
+game_end = False
 
 # run loop
 running = True
@@ -130,6 +128,8 @@ while running:
             if event.key == K_ESCAPE:
                 running = False
         elif event.type == MOUSEBUTTONDOWN:
+            if game_end:
+                break
 
             # Clicking a square
             if event.button == 1:  # 1 specifies the left mouse button
@@ -142,7 +142,7 @@ while running:
                         (MOVE_ANYWHERE and moves is not None):
 
                     print(f"Moving {selected}")
-                    selected.move(row, col, log_board)
+                    log_board.move_piece(selected.x, selected.y, row, col)
                     log_board.clear_selection()
 
                     turn = switch_turn(turn)
@@ -164,12 +164,33 @@ while running:
 
         elif event.type == MOUSEBUTTONUP:
             # Mouse Drag: letting go
+            if game_end:
+                break
+
             if event.button == 1:
                 row, col = get_mouse_board_coordinates(SQUARE_LENGTH)
 
                 # isinstance checks for selected surface in practice
                 if selected is not None:
                     print(f"{selected} let go at ({row}, {col})")
+
+    # check for mate
+    found_white, found_black = False, False
+    for i in range(BOARD_LENGTH):
+        for j in range(BOARD_LENGTH):
+            if isinstance(log_board.back_board[j][i], King):
+                if log_board.back_board[j][i].color == "white":
+                    found_white = True
+                else:
+                    found_black = True
+
+    if not found_black:
+        print("White won!")
+        game_end = True
+
+    if not found_white:
+        print("Black Won!")
+        game_end = True
 
     # renders board in checkerboard pattern with
     render_board_2_surf(log_board.back_board, surf_1, surf_2)
