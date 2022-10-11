@@ -21,8 +21,10 @@ FPS = 24  # Chess doesnt need a high fps.
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
-IGNORE_TURNS = False
-MOVE_ANYWHERE = False
+
+# Options for manual debugging
+IGNORE_TURNS = True
+MOVE_ANYWHERE = True
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Chess")
@@ -35,19 +37,22 @@ color1, color2 = color_theme["Green"]
 # start window (returns surface)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-king_img = pygame.image.load('images/King.png')
-queen_img = pygame.image.load('images/queen.png')
 selected_img = pygame.image.load('images/selected_mark.png')
-queen_img.set_colorkey((255, 255, 255))
-sprite_sh_img = pygame.image.load('images/output-onlinepngtools.png')
+sprite_sh_img1 = pygame.image.load('images/output-onlinepngtools - Copy.png')
+sprite_sh_img2 = pygame.image.load('images/Chess_spritesheet.png')
+
 bounding_size = 100
+bounding_size2 = 126
+sprite_sheet1 = PieceSpriteSheet(sprite_sh_img1, bounding_size, white_top=False,
+                                 piece_order=("king", "queen", "rook", "bishop",
+                                              "knight", "pawn"),
+                                 delta_x=168, delta_y=143, start_x=22, start_y=22)
 
-sprite_sheet = PieceSpriteSheet(sprite_sh_img, bounding_size, white_top=False,
-                                piece_order=("king", "queen", "rook", "bishop",
-                                             "knight", "pawn"),
-                                delta_x=168, delta_y=143, start_x=22, start_y=22)
+sprite_sheet2 = PieceSpriteSheet(sprite_sh_img2, bounding_size2, white_top=True,
+                                 piece_order=("king", "queen", "bishop", "knight", "rook", "pawn"),
+                                 delta_x=141, delta_y=141, start_x=42, start_y=36, background_color=(247, 247, 247))
 
-king_img_spsh = sprite_sheet.get_image("queen", False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)
+sprite_sheet = sprite_sheet1
 
 images_2d = [[None for i in range(BOARD_LENGTH)] for j in range(BOARD_LENGTH)]  # Makes 2d list with Nones
 
@@ -93,11 +98,19 @@ def create_sprite_dict(piece_spsh: PieceSpriteSheet, select_mark_image):
     sprites = dict()
     pieces = ("pawn", "knight", "bishop", "rook", "queen", "king")
     for piece in pieces:
-        sprites[piece] = {"white": piece_spsh.get_image(piece, True, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH),
-                          "black": piece_spsh.get_image(piece, False, (0, 0, 0), SQUARE_LENGTH, SQUARE_LENGTH)}
+        sprites[piece] = {
+            "white": piece_spsh.get_image(piece, True, SQUARE_LENGTH, SQUARE_LENGTH),
+            "black": piece_spsh.get_image(piece, False, SQUARE_LENGTH, SQUARE_LENGTH)}
 
     sprites["select_mark"] = select_mark_image
     return sprites
+
+
+# given a piece and its valid moves, updates the board and changes the valid move.
+def update_possible_moves(piece: Piece, board: Board):
+    new_moves = piece.poss_moves(board.back_board)
+    log_board.show_selection(new_moves)
+    return new_moves
 
 
 # Make surfaces for each squares and fill with colored surface if empty
@@ -108,11 +121,10 @@ sprite_dict = create_sprite_dict(sprite_sheet, select_mark_image=selected_img)
 log_board = Board(sprite_dict=sprite_dict)
 
 # loop variables
-mouse_held_down = False  # Is left mouse button held down?
-selected = None
-moves = None
-turn = "white"
-game_end = False
+selected = None  # selected piece. Its moves will be shown
+moves = None  # valid squares the selected piece can move to. None is no selected piece
+turn = "white"  # which color can move
+game_end = False  # Has the game ended
 
 # run loop
 running = True
@@ -122,7 +134,7 @@ while running:
 
     # event handler
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or event.type == KEYDOWN:
             running = False
         elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
@@ -137,11 +149,10 @@ while running:
                 row, col = get_mouse_board_coordinates(
                     SQUARE_LENGTH)  # gets row, col of the board where mouse held down
 
-                # Checking if it was just clicked or is being dragged
+                # Checking that something is selected, that it is not moving to its own square, and that either the square
+                # it is moving to is valid or MOVE_ANYWHERE=True
                 if selected is not log_board.back_board[col][row] and val_move((row, col), moves) or \
                         (MOVE_ANYWHERE and moves is not None):
-
-                    print(f"Moving {selected}")
                     log_board.move_piece(selected.x, selected.y, row, col)
                     log_board.clear_selection()
 
@@ -149,47 +160,20 @@ while running:
                     selected = None
                     moved = True
 
-                # If a piece is clicked its possible moves are shown.
+                # If a piece is clicked its possible moves are retrieved and shown on screen
                 if isinstance(log_board.back_board[col][row], Piece) and (
                         IGNORE_TURNS or turn == log_board.back_board[col][row].color):
-
                     selected = log_board.back_board[col][row]
-                    print(f"{selected} was selected")
-                    moves = selected.poss_moves(log_board.back_board)
-                    log_board.show_selection(moves)
+                    moves = update_possible_moves(selected, log_board)
 
+                # Clear board if an empty square clicked
                 if moved or log_board.back_board[col][row] is None:
                     log_board.clear_selection()
                     moves = None
 
-        elif event.type == MOUSEBUTTONUP:
-            # Mouse Drag: letting go
-            if game_end:
-                break
-
-            if event.button == 1:
-                row, col = get_mouse_board_coordinates(SQUARE_LENGTH)
-
-                # isinstance checks for selected surface in practice
-                if selected is not None:
-                    print(f"{selected} let go at ({row}, {col})")
-
     # check for mate
-    found_white, found_black = False, False
-    for i in range(BOARD_LENGTH):
-        for j in range(BOARD_LENGTH):
-            if isinstance(log_board.back_board[j][i], King):
-                if log_board.back_board[j][i].color == "white":
-                    found_white = True
-                else:
-                    found_black = True
-
-    if not found_black:
-        print("White won!")
-        game_end = True
-
-    if not found_white:
-        print("Black Won!")
+    if log_board.game_end:
+        print(f"{log_board.winner} has won!")
         game_end = True
 
     # renders board in checkerboard pattern with

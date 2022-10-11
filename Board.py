@@ -29,6 +29,8 @@ class Board:
         self.back_board = self.__new_back_board()
         self.use_gui = use_gui
         self.str_board = self.__new_str_board()
+        self.game_end = False
+        self.winner = None
 
 
     # Not used anywhere. Was for debugging
@@ -39,6 +41,15 @@ class Board:
     # A function to improve readability of the move function - this way it can be called from the board.
     def move_piece(self, old_x, old_y, new_x, new_y):
         piece = self.back_board[old_y][old_x]
+
+        # check for king being taken
+        if isinstance(self.back_board[new_y][new_x], King):
+            if self.back_board[new_y][new_x].color == "white":
+                self.winner = "black"
+            elif self.back_board[new_y][new_x].color == "black":
+                self.winner = "white"
+            self.game_end = True
+
         piece.move(new_x, new_y, self)
 
         # check for promotion
@@ -46,10 +57,9 @@ class Board:
                 (new_y == 0 and piece.color == "white") or (new_y == 7 and piece.color == "black")):
             self.back_board[new_y][new_x] = Queen(new_x, new_y, piece.color, sprite=self.sprite_dict["queen"][piece.color])
 
-    def print_front(self):
-        if self.use_gui:
-            raise NotImplementedError
-        else:
+
+    # Only used for cmd display
+        def print_front(self):
             print(" ", ['0', '1', '2', '3', '4', '5', '6', '7'])
             for index, i in enumerate(self.str_board):
                 print(index, i)

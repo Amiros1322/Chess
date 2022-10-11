@@ -5,13 +5,14 @@ import pygame
 
 # Assumes Sprites arranged in two rows - 1 for each color
 class PieceSpriteSheet:
-
     piece_names = {"knight", "pawn", "rook", "king", "queen", "bishop",
                    "k", "p", "r", "k", "q", "b"}
 
-    def __init__(self, image, square_length, white_top: bool, piece_order: tuple, delta_x, delta_y, start_x=0, start_y=0):
+    def __init__(self, image, square_length, white_top: bool, piece_order: tuple, delta_x, delta_y, start_x=0, start_y=0,
+                 background_color=(0, 0, 0)):
         self._validate_pieces(piece_order)
         self.sheet = image
+        self.background_color = background_color
         self.square_length = square_length  # length of square in board
         self.white_top = white_top  # whether the top row is white pieces or black
         self.piece_order = dict(zip(piece_order, range(len(piece_order))))  # dict of piece: piece location
@@ -22,7 +23,11 @@ class PieceSpriteSheet:
         self.start_x = start_x
         self.start_y = start_y
 
-    def get_image(self, piece_name, is_white, background_color, scale_to_x, scale_to_y, width=None, height=None):
+    def get_image(self, piece_name, is_white, scale_to_x, scale_to_y, width=None, height=None, back_color=None):
+
+        # Checks for custom background_color input
+        if back_color is None:
+            back_color = self.background_color
 
         # Checks for width/height input
         if width is None and height is None:
@@ -36,7 +41,7 @@ class PieceSpriteSheet:
         image = pygame.Surface((width, height)).convert_alpha()
         image.blit(self.sheet, (0, 0), (x, y, width, height))
         image = pygame.transform.scale(image, (scale_to_x, scale_to_y))
-        image.set_colorkey(background_color)
+        image.set_colorkey(back_color)
 
         return image
 

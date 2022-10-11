@@ -41,7 +41,7 @@ class Pawn(Piece):
             poss_moves.append((self.x, self.y + 1 * change))
 
         # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
-        if self.y == first_y and back_board[self.y + 2 * change][self.x] is None:
+        if self.y == first_y and back_board[self.y + 2 * change][self.x] is None and back_board[self.y + change][self.x] is None:
             poss_moves.append((self.x, self.y + 2 * change))
         try:
             if back_board[self.y + 1 * change][self.x + 1].color != self.color:
