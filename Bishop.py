@@ -15,7 +15,7 @@ class Bishop(Piece, Diagonal):
     def __name__():
         return "Bishop"
 
-    def poss_moves(self, back_board):
-        return self.all_diag(back_board)
+    def poss_moves(self, board):
+        return self.all_diag(board.back_board)
 
 

@@ -43,5 +43,5 @@ class Knight(Piece):
         squares = [(self.x + 1, self.y + 2), (self.x + 2, self.y + 1), (self.x + 2, self.y - 1),
                    (self.x + 1, self.y - 2), (self.x - 1, self.y - 2), (self.x - 2, self.y - 1),
                    (self.x - 2, self.y + 1), (self.x - 1, self.y + 2)]
-        valids = self.valid_moves(squares, board)
+        valids = self.valid_moves(squares, board.back_board)
         return valids

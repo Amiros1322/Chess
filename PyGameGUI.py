@@ -24,7 +24,7 @@ SQUARE_LENGTH = 85
 
 # Options for manual debugging
 IGNORE_TURNS = True
-MOVE_ANYWHERE = True
+MOVE_ANYWHERE = False
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Chess")
@@ -108,7 +108,7 @@ def create_sprite_dict(piece_spsh: PieceSpriteSheet, select_mark_image):
 
 # given a piece and its valid moves, updates the board and changes the valid move.
 def update_possible_moves(piece: Piece, board: Board):
-    new_moves = piece.poss_moves(board.back_board)
+    new_moves = piece.poss_moves(board)
     log_board.show_selection(new_moves)
     return new_moves
 

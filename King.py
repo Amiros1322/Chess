@@ -18,7 +18,7 @@ class King(Piece):
     runs through the three possibilities for that coordinate, and checks if it is open or not with \
     try except."
 
-    def poss_moves(self, b_board):
+    def poss_moves(self, board):
         squares = [(self.x + 1, self.y), (self.x + 1, self.y + 1), (self.x, self.y + 1),
                    (self.x - 1, self.y + 1),  (self.x - 1, self.y), (self.x - 1, self.y - 1),
                    (self.x, self.y - 1), (self.x + 1, self.y + 1)]
@@ -27,7 +27,7 @@ class King(Piece):
             try:
                 y = squares[i][1]
                 x = squares[i][0]
-                if min(squares[i]) < 0 or max(squares[i]) > 7 or b_board[y][x].color == self.color:
+                if min(squares[i]) < 0 or max(squares[i]) > 7 or board.back_board[y][x].color == self.color:
                     squares.remove(squares[i])
                     i -= 1
             except:

@@ -15,7 +15,7 @@ class Queen(Piece, Diagonal, Horizontal):
     def __name__():
         return "Queen"
 
-    def poss_moves(self, b_board):
-        squares = self.all_diag(b_board)
-        squares.extend(self.horizontal_moves(b_board))
+    def poss_moves(self, board):
+        squares = self.all_diag(board.back_board)
+        squares.extend(self.horizontal_moves(board.back_board))
         return squares

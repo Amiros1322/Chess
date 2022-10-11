@@ -44,7 +44,7 @@ def Main():
 
         # Returns the possible moves of the piece on square (x, y)
         piece = game_board.back_board[y][x]
-        moves = piece.poss_moves(game_board.back_board)
+        moves = piece.poss_moves(game_board)
         game_board.show_selection(moves)
         print("{0} selected".format(piece.__name__()))
 

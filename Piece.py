@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 from copy import deepcopy, copy
 import math
 
+
 class Piece(object, metaclass=ABCMeta):
 
     @abstractmethod
@@ -36,11 +37,26 @@ class Piece(object, metaclass=ABCMeta):
         board.str_board[self.y][self.x] = self.empty_vis()
         board.str_board[new_y][new_x] = self.visualization()
 
+        # Removes piece taken piece if taking en passant
+        if board.en_passant and new_x == board.en_passant[0] and new_y == board.en_passant[1]:
+            board.back_board[self.y][new_x] = None
+            print(f"Delete {(self.y, new_x)}")
+            # if self.color == "white":
+            #     board.back_board[self.y][new_x] = None
+            #     print(f"Delete {(self.y, new_x)}")
+            # else:
+            #     board.back_board[self.y + 1][new_x] = None
+            #     print(f"Delete {(self.y + 1, new_x)}")
+
+        board.en_passant = None
+
         # en passant check
-        if self.__name__ == "Pawn" and math.fabs(self.y - new_y) == 2:
-            board.back_board[self.y][self.x] = self
-            board.str_board[self.y][self.x] = "-"
-            self.en_passant.append()
+        if str(self) in ('p', 'P') and math.fabs(self.y - new_y) == 2:
+            if self.color == "white":
+                board.en_passant = (self.x, new_y + 1)
+            else:
+                board.en_passant = (self.x, new_y - 1)
+            print(board.en_passant)
 
         self.x = new_x
         self.y = new_y

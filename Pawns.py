@@ -12,8 +12,18 @@ class Pawn(Piece):
 
     def __init__(self, x, y, color, sprite=None):
         super().__init__(x, y, color, sprite=sprite)
-        # if a pawn moves 2 squares, an opponent may do take the piece and move to the first
-        # square the pawn moved past.
+        
+        # En passant
+        self.can_be_taken_EP = False
+
+        # all pawn movements are one or two squares, but in different directions and with different starting
+        # squares depending on the color of the piece.
+        if self.color == "white":
+            self.change = -1
+            self.first_y = 6
+        else:
+            self.change = 1
+            self.first_y = 1
 
     def __str__(self):
         if self.color == "white":
@@ -24,33 +34,30 @@ class Pawn(Piece):
     def __name__():
         return "Pawn"
 
-    def poss_moves(self, back_board):
-        # all pawn movements are one or two squares, but in different directions and with different starting
-        # squares depending on the color of the piece.
-        change = 1  # the direction the piece moves in - will change to -1 if piece is white.
-        first_y = 1  # the y value that the piece starts on
-
-        if str(self).islower():
-            change = -1
-            first_y = 6
-
+    def poss_moves(self, board):
+        back_board = board.back_board
         poss_moves = []
 
         # adds the square in front of the pawn to poss_moves if it is empty.
-        if back_board[self.y + change][self.x] is None:
-            poss_moves.append((self.x, self.y + 1 * change))
+        if back_board[self.y + self.change][self.x] is None:
+            poss_moves.append((self.x, self.y + 1 * self.change))
 
         # if the piece is on it's starting square, it can move 2 squares at once.This possibility is added to poss_moves
-        if self.y == first_y and back_board[self.y + 2 * change][self.x] is None and back_board[self.y + change][self.x] is None:
-            poss_moves.append((self.x, self.y + 2 * change))
+        if self.y == self.first_y and back_board[self.y + 2 * self.change][self.x] is None and back_board[self.y + self.change][self.x] is None:
+            poss_moves.append((self.x, self.y + 2 * self.change))
+            
+        # Adds taking en passant if possible.
+        if self.can_take_ep(board):
+            poss_moves.append(board.en_passant)
+
         try:
-            if back_board[self.y + 1 * change][self.x + 1].color != self.color:
-                poss_moves.append((self.x + 1, self.y + change))
+            if back_board[self.y + 1 * self.change][self.x + 1].color != self.color:
+                poss_moves.append((self.x + 1, self.y + self.change))
         except:
             pass
         try:
-            if back_board[self.y + change][self.x - 1].color != self.color:
-                poss_moves.append((self.x - 1, self.y + change))
+            if back_board[self.y + self.change][self.x - 1].color != self.color:
+                poss_moves.append((self.x - 1, self.y + self.change))
         except:
             pass
 
@@ -78,10 +85,9 @@ class Pawn(Piece):
         board.back_board[self.y][self.x] = new_piece_obj
         board.str_board[self.y][self.x] = str(new_piece_obj)
 
-    # TODO implement
-
-    """
-    def take_passant(self, back_board):
-        try:
-            if back_board[self.y][self.x + 1]
-    """
+    def can_take_ep(self, board):
+        if not board.en_passant:
+            return False
+        
+        if abs(self.x - board.en_passant[0]) == 1 and self.y + self.change == board.en_passant[1]:
+            return True

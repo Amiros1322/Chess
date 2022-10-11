@@ -26,6 +26,7 @@ class Board:
         else:
             raise Exception("Invalid Sprite_dict")
 
+        self.en_passant = None  # Square that can be taken en passant. None or (x, y) of square that can be taken.
         self.back_board = self.__new_back_board()
         self.use_gui = use_gui
         self.str_board = self.__new_str_board()
@@ -43,7 +44,7 @@ class Board:
         piece = self.back_board[old_y][old_x]
 
         # check for king being taken
-        if isinstance(self.back_board[new_y][new_x], King):
+        if type(self.back_board[new_y][new_x]) is King:
             if self.back_board[new_y][new_x].color == "white":
                 self.winner = "black"
             elif self.back_board[new_y][new_x].color == "black":

@@ -16,5 +16,5 @@ class Rook(Piece, Horizontal):
     def __name__():
         return "Rook"
 
-    def poss_moves(self, b_board):
-        return self.horizontal_moves(b_board)
+    def poss_moves(self, board):
+        return self.horizontal_moves(board.back_board)
