@@ -17,7 +17,7 @@ from Piece import Piece
 from King import King
 from Helper import val_move, val_select, switch_turn
 
-FPS = 24  # Chess doesnt need a high fps.
+FPS = 10  # Chess doesnt need a high fps. Better not to loop for no reason.
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 700
 BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
@@ -31,8 +31,8 @@ pygame.display.set_caption("Chess")
 
 # default theme brown. TODO: Change theme option
 # darker color should be on the right. Otherwise square color inversed
-color_theme = {"Brown": ("#964d22", "#964d37"), "Green": ("#eeeed2", "#769656")}
-color1, color2 = color_theme["Green"]
+color_theme = {"Brown": ("#eed2bb", "#a66f5c"), "Green": ("#eeeed2", "#769656")}
+color1, color2 = color_theme["Brown"]
 
 # start window (returns surface)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -121,16 +121,24 @@ sprite_dict = create_sprite_dict(sprite_sheet, select_mark_image=selected_img)
 log_board = Board(sprite_dict=sprite_dict)
 
 # loop variables
-selected = None  # selected piece. Its moves will be shown
-moves = None  # valid squares the selected piece can move to. None is no selected piece
+selected = None  # selected piece. Squares it can move to will be marked on the GUI
+moves = None  # valid squares the selected piece can move to. None if no selected piece
 turn = "white"  # which color can move
+ai_color = None  # color of the AI
 game_end = False  # Has the game ended
 
 # run loop
 running = True
 while running:
-    # set game FPS. (changing this will change 'speed' of the game)
+    # set game FPS. (changing this will change 'speed' of the game. Should be low for chess.)
     clock.tick(FPS)
+
+    # TODO: implement AI
+    if turn == ai_color:
+        # piece, new_square = get_ai_move(board, ai_object)
+        # board.move_piece(piece.x, piece.y, new_square.x, new_square.y)
+        turn = switch_turn(turn)
+        raise NotImplementedError
 
     # event handler
     for event in pygame.event.get():

@@ -3,7 +3,7 @@ from Knight import Knight
 from Piece import Piece
 from Queen import Queen
 from Rook import Rook
-
+import math
 
 class Pawn(Piece):
     # takes coordinates of en_passant. That way after an opponent does not eat a piece it can delete it w/out
@@ -33,6 +33,24 @@ class Pawn(Piece):
     @staticmethod
     def __name__():
         return "Pawn"
+
+    def move(self, new_x, new_y, board):
+        super(Pawn, self).move(new_x, new_y, board)
+
+        # # Removes piece taken piece if taking en passant
+        # if board.en_passant and new_x == board.en_passant[0] and new_y == board.en_passant[1]:
+        #     board.back_board[self.y][new_x] = None
+        #     print(f"Delete {(self.y, new_x)}")
+        #
+        # # board.en_passant = None
+        #
+        # # setting en passant if pawn moved 2 squares.
+        # if str(self) in ('p', 'P') and math.fabs(self.y - new_y) == 2:
+        #     if self.color == "white":
+        #         board.en_passant = (self.x, new_y + 1)
+        #     else:
+        #         board.en_passant = (self.x, new_y - 1)
+        #     print(board.en_passant)
 
     def poss_moves(self, board):
         back_board = board.back_board

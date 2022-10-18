@@ -1,3 +1,5 @@
+import math
+
 from Piece import Piece
 from Pawns import Pawn
 from Knight import Knight
@@ -32,6 +34,8 @@ class Board:
         self.str_board = self.__new_str_board()
         self.game_end = False
         self.winner = None
+        self.can_castle_white = True
+        self.can_castle_black = True
 
 
     # Not used anywhere. Was for debugging
@@ -50,6 +54,14 @@ class Board:
             elif self.back_board[new_y][new_x].color == "black":
                 self.winner = "white"
             self.game_end = True
+
+        # check for castling
+        if type(piece) is King:
+            if math.fabs(old_x - new_x) > 1:
+                if piece.color == "white":
+                    self.can_castle_white = False
+                else:
+                    self.can_castle_black = False
 
         piece.move(new_x, new_y, self)
 
