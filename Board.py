@@ -37,6 +37,9 @@ class Board:
         self.can_castle_white = True
         self.can_castle_black = True
 
+        # Protected so that turn
+        self.white_turn = True
+
 
     # Not used anywhere. Was for debugging
     def print_back(self):
@@ -178,6 +181,15 @@ class Board:
                 return False
 
         return True
+
+    def switch_turn(self):
+        self.white_turn = not self.white_turn
+
+    # TODO: Refactor so that this isn't necessary. Whether a piece is white or black should be a bool in the piece.
+    def color_turn(self):
+        if self.white_turn:
+            return "white"
+        return "black"
 
 
 

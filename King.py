@@ -33,6 +33,13 @@ class King(Piece):
                 # Kingside Castle
                 board.back_board[self.y][7].move(new_x - 1, new_y, board)
 
+        # If moving and not castling, remove castling rights
+        elif self.color == "white":
+            board.can_castle_white = False
+        elif self.color == "black":
+            board.can_castle_black = False
+
+
         super(King, self).move(new_x, new_y, board)
 
     "TODO: possible improvement here, making a nested for loop (1 loop for each coordinate - each \
@@ -40,9 +47,9 @@ class King(Piece):
     try except."
 
     def poss_moves(self, board):
-        squares = [(self.x + 1, self.y), (self.x + 1, self.y + 1), (self.x, self.y + 1),
-                   (self.x - 1, self.y + 1), (self.x - 1, self.y), (self.x - 1, self.y - 1),
-                   (self.x, self.y - 1), (self.x + 1, self.y + 1)]
+        squares = [(self.x + 1, self.y - 1), (self.x + 1, self.y), (self.x + 1, self.y + 1),
+                   (self.x, self.y - 1), (self.x, self.y + 1),
+                   (self.x - 1, self.y + 1), (self.x - 1, self.y), (self.x - 1, self.y - 1)]
 
         if (self.color == "white" and board.can_castle_white) or (self.color == "black" and board.can_castle_black):
 
@@ -52,20 +59,18 @@ class King(Piece):
                 squares.append((self.x + 2, self.y))
 
             if board.back_board[self.y][self.x - 1] is None and board.back_board[self.y][self.x - 2] is None and \
-                board.back_board[self.y][self.x - 3] is None and type(board.back_board[self.y][self.x - 4]) is Rook:
+                    board.back_board[self.y][self.x - 3] is None and type(board.back_board[self.y][self.x - 4]) is Rook:
                 squares.append((self.x - 2, self.y))
 
         # Removes blocked squares
         i = 0
         while i < len(squares):
-            try:
-                y = squares[i][1]
-                x = squares[i][0]
-                if min(squares[i]) < 0 or max(squares[i]) > 7 or board.back_board[y][x].color == self.color:
-                    squares.remove(squares[i])
-                    i -= 1
-            except:
-                print("King Exception", i)
-                pass
+
+            y = squares[i][1]
+            x = squares[i][0]
+            if min(squares[i]) < 0 or max(squares[i]) > 7 or (issubclass(type(board.back_board[y][x]), Piece) and board.back_board[y][x].color == self.color):
+                squares.remove(squares[i])
+                i -= 1
+
             i += 1
         return squares

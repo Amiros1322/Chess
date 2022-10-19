@@ -23,7 +23,7 @@ BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
 
 # Options for manual debugging
-IGNORE_TURNS = True
+IGNORE_TURNS = False
 MOVE_ANYWHERE = False
 
 clock = pygame.time.Clock()
@@ -88,8 +88,7 @@ def render_board_2_surf(piece_board, s1, s2):
 
 def get_mouse_board_coordinates(square_len):
     mx, my = pygame.mouse.get_pos()
-    row, col = mx // square_len, my // square_len
-    return row, col
+    return mx // square_len, my // square_len  # returns row, column
 
 
 # Given a spritesheet of chess pieces, returns a dictionary mapping each piece type to its sprite:
@@ -123,7 +122,6 @@ log_board = Board(sprite_dict=sprite_dict)
 # loop variables
 selected = None  # selected piece. Squares it can move to will be marked on the GUI
 moves = None  # valid squares the selected piece can move to. None if no selected piece
-turn = "white"  # which color can move
 ai_color = None  # color of the AI
 game_end = False  # Has the game ended
 
@@ -134,10 +132,10 @@ while running:
     clock.tick(FPS)
 
     # TODO: implement AI
-    if turn == ai_color:
+    if log_board.color_turn() == ai_color:
         # piece, new_square = get_ai_move(board, ai_object)
         # board.move_piece(piece.x, piece.y, new_square.x, new_square.y)
-        turn = switch_turn(turn)
+        log_board.switch_turn()
         raise NotImplementedError
 
     # event handler
@@ -164,13 +162,13 @@ while running:
                     log_board.move_piece(selected.x, selected.y, row, col)
                     log_board.clear_selection()
 
-                    turn = switch_turn(turn)
+                    log_board.switch_turn()
                     selected = None
                     moved = True
 
                 # If a piece is clicked its possible moves are retrieved and shown on screen
                 if isinstance(log_board.back_board[col][row], Piece) and (
-                        IGNORE_TURNS or turn == log_board.back_board[col][row].color):
+                        IGNORE_TURNS or log_board.color_turn() == log_board.back_board[col][row].color):
                     selected = log_board.back_board[col][row]
                     moves = update_possible_moves(selected, log_board)
 
