@@ -67,9 +67,10 @@ class Piece(object, metaclass=ABCMeta):
         def valid_move(move):
             x = move[0]
             y = move[1]
+            # TODO: See if using type + issubclass is faster than isinstance with an abstract class
             if (
                     min(move) < 0 or max(move) > 7 or
-                    (isinstance(back_board[y][x], Piece) and back_board[y][x].color == self.color)
+                    (issubclass(type(back_board[y][x]), Piece) and back_board[y][x].color == self.color)
             ):
                 return False
             return True

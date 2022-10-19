@@ -23,7 +23,7 @@ BOARD_LENGTH = 8
 SQUARE_LENGTH = 85
 
 # Options for manual debugging
-IGNORE_TURNS = False
+IGNORE_TURNS = True
 MOVE_ANYWHERE = False
 
 clock = pygame.time.Clock()

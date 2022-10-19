@@ -33,12 +33,9 @@ class King(Piece):
                 # Kingside Castle
                 board.back_board[self.y][7].move(new_x - 1, new_y, board)
 
-        # If moving and not castling, remove castling rights
-        elif self.color == "white":
-            board.can_castle_white = False
-        elif self.color == "black":
-            board.can_castle_black = False
-
+        # If moving or castling, remove castling rights
+        board.remove_castling_rights(self.color)
+        self.can_castle = False
 
         super(King, self).move(new_x, new_y, board)
 
@@ -51,16 +48,8 @@ class King(Piece):
                    (self.x, self.y - 1), (self.x, self.y + 1),
                    (self.x - 1, self.y + 1), (self.x - 1, self.y), (self.x - 1, self.y - 1)]
 
-        if (self.color == "white" and board.can_castle_white) or (self.color == "black" and board.can_castle_black):
-
-            # if can castle king is on starting square. Checks that empty squares between king and rook.
-            if board.back_board[self.y][self.x + 1] is None and board.back_board[self.y][self.x + 2] is None and \
-                    type(board.back_board[self.y][self.x + 3]) is Rook:
-                squares.append((self.x + 2, self.y))
-
-            if board.back_board[self.y][self.x - 1] is None and board.back_board[self.y][self.x - 2] is None and \
-                    board.back_board[self.y][self.x - 3] is None and type(board.back_board[self.y][self.x - 4]) is Rook:
-                squares.append((self.x - 2, self.y))
+        if self.can_castle:
+            squares.extend(self.castle_squares(board))
 
         # Removes blocked squares
         i = 0
@@ -74,3 +63,27 @@ class King(Piece):
 
             i += 1
         return squares
+
+    # Returns tuple of valid castling squares
+    def castle_squares(self, board):
+        castle_squares = []
+
+        if self.color == "white":
+            king_side = board.castle_white_KS
+            queen_side = board.castle_white_QS
+        else:
+            king_side = board.castle_black_KS
+            queen_side = board.castle_black_QS
+
+        if board.back_board[self.y][self.x + 1] is None and board.back_board[self.y][self.x + 2] is None and \
+                king_side:
+            castle_squares.append((self.x + 2, self.y))
+
+        if board.back_board[self.y][self.x - 1] is None and board.back_board[self.y][self.x - 2] is None and \
+                board.back_board[self.y][self.x - 3] is None and queen_side:
+            castle_squares.append((self.x - 2, self.y))
+
+        return castle_squares
+
+
+

@@ -37,6 +37,11 @@ class Board:
         self.can_castle_white = True
         self.can_castle_black = True
 
+        self.castle_black_KS = True
+        self.castle_black_QS = True
+        self.castle_white_KS = True
+        self.castle_white_QS = True
+
         # Protected so that turn
         self.white_turn = True
 
@@ -61,10 +66,17 @@ class Board:
         # check for castling
         if type(piece) is King:
             if math.fabs(old_x - new_x) > 1:
-                if piece.color == "white":
-                    self.can_castle_white = False
-                else:
-                    self.can_castle_black = False
+                self.remove_castling_rights(piece.color)
+
+        # Checks whether to call type(piece) is Rook to check if the rook moved.
+        if old_x == 0 and old_y == 0:
+            self.castle_black_QS = False
+        elif old_x == 7 and old_y == 0:
+            self.castle_black_KS = False
+        elif old_x == 0 and old_y == 7:
+            self.castle_white_QS = False
+        elif old_x == 7 and old_y == 7:
+            self.castle_white_KS = False
 
         piece.move(new_x, new_y, self)
 
@@ -190,6 +202,26 @@ class Board:
         if self.white_turn:
             return "white"
         return "black"
+
+    def remove_castling_rights(self, color, side=False):
+        if not side:
+            if color == "white":
+                self.castle_white_QS = False
+                self.castle_white_KS = False
+            elif color == "black":
+                self.castle_black_QS = False
+                self.castle_black_KS = False
+        elif side == "queen":
+            if color == "white":
+                self.castle_white_QS = False
+            elif color == "black":
+                self.castle_black_QS = False
+        elif side == "king":
+            if color == "white":
+                self.castle_white_KS = False
+            elif color == "black":
+                self.castle_black_KS = False
+
 
 
 
